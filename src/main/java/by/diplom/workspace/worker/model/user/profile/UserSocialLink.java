@@ -1,6 +1,6 @@
-package by.diplom.workspace.model.user.profile;
+package by.diplom.workspace.worker.model.user.profile;
 
-import by.diplom.workspace.model.user.User;
+import by.diplom.workspace.worker.model.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,16 +15,16 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(
-        name = "user_emails",
+        name = "user_social_links",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "uk_user_email",
-                        columnNames = "email"
+                        name = "uk_user_social_platform",
+                        columnNames = {"user_id", "platform_id"}
                 )
         }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserEmail {
+public class UserSocialLink {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,29 +34,20 @@ public class UserEmail {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "platform_id", nullable = false)
+    private SocialPlatform platform;
 
-    @Column(name = "is_verified", nullable = false)
-    private boolean verified = false;
-
-    @Column(name = "is_primary", nullable = false)
-    private boolean primaryEmail = false;
+    @Column(name = "url", nullable = false, length = 2048)
+    private String url;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    public UserEmail(
-            User user,
-            String email,
-            boolean verified,
-            boolean primaryEmail
-    ) {
+    public UserSocialLink(User user, SocialPlatform platform, String url) {
         this.user = user;
-        this.email = email;
-        this.verified = verified;
-        this.primaryEmail = primaryEmail;
+        this.platform = platform;
+        this.url = url;
     }
-
 }

@@ -1,6 +1,6 @@
-package by.diplom.workspace.model.user.profile;
+package by.diplom.workspace.worker.model.user.profile;
 
-import by.diplom.workspace.model.user.User;
+import by.diplom.workspace.worker.model.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,16 +15,16 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(
-        name = "user_social_links",
+        name = "user_emails",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "uk_user_social_platform",
-                        columnNames = {"user_id", "platform_id"}
+                        name = "uk_user_email",
+                        columnNames = "email"
                 )
         }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserSocialLink {
+public class UserEmail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,20 +34,29 @@ public class UserSocialLink {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "platform_id", nullable = false)
-    private SocialPlatform platform;
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
-    @Column(name = "url", nullable = false, length = 2048)
-    private String url;
+    @Column(name = "is_verified", nullable = false)
+    private boolean verified = false;
+
+    @Column(name = "is_primary", nullable = false)
+    private boolean primaryEmail = false;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    public UserSocialLink(User user, SocialPlatform platform, String url) {
+    public UserEmail(
+            User user,
+            String email,
+            boolean verified,
+            boolean primaryEmail
+    ) {
         this.user = user;
-        this.platform = platform;
-        this.url = url;
+        this.email = email;
+        this.verified = verified;
+        this.primaryEmail = primaryEmail;
     }
+
 }

@@ -1,4 +1,4 @@
-package by.diplom.workspace.model.user.profile.position;
+package by.diplom.workspace.worker.model.user.profile.position;
 
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;

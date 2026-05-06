@@ -1,6 +1,6 @@
-package by.diplom.workspace.model.user.settings;
+package by.diplom.workspace.worker.model.user.settings;
 
-import by.diplom.workspace.model.user.User;
+import by.diplom.workspace.worker.model.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

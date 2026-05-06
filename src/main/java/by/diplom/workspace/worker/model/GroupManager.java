@@ -1,7 +1,7 @@
-package by.diplom.workspace.model;
+package by.diplom.workspace.worker.model;
 
-import by.diplom.workspace.model.user.profile.position.DepartmentPosition;
-import by.diplom.workspace.model.user.User;
+import by.diplom.workspace.worker.model.user.profile.position.DepartmentPosition;
+import by.diplom.workspace.worker.model.user.User;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -18,7 +18,7 @@ import java.util.List;
 public class GroupManager extends User {
 
     @OneToMany(mappedBy = "groupManager")
-    private List<Employee> employees = new ArrayList<>();
+    private final List<Employee> employees = new ArrayList<>();
 
     public GroupManager(
             String fullName,

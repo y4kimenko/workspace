@@ -1,10 +1,12 @@
-package by.diplom.workspace.model.user.profile.position;
+package by.diplom.workspace.worker.model.user.profile.position;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,16 +16,16 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(
-        name = "departments",
+        name = "positions",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "uk_department_name",
+                        name = "uk_position_name",
                         columnNames = "name"
                 )
         }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Department {
+public class Position {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +34,7 @@ public class Department {
     @Column(name = "name", nullable = false)
     private String name;
 
-    public Department(String name) {
+    public Position(String name) {
         this.name = name;
     }
 }

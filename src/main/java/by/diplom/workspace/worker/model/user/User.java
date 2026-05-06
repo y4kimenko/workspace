@@ -1,12 +1,12 @@
-package by.diplom.workspace.model.user;
+package by.diplom.workspace.worker.model.user;
 
-import by.diplom.workspace.model.user.profile.position.DepartmentPosition;
-import by.diplom.workspace.model.user.profile.SocialPlatform;
-import by.diplom.workspace.model.user.profile.UserEmail;
-import by.diplom.workspace.model.user.settings.UserAppearanceSettings;
-import by.diplom.workspace.model.user.profile.UserSocialLink;
-import by.diplom.workspace.model.user.settings.UserNotificationSettings;
-import by.diplom.workspace.model.user.settings.UserPrivacySettings;
+import by.diplom.workspace.worker.model.user.profile.position.DepartmentPosition;
+import by.diplom.workspace.worker.model.user.profile.SocialPlatform;
+import by.diplom.workspace.worker.model.user.profile.UserEmail;
+import by.diplom.workspace.worker.model.user.settings.UserAppearanceSettings;
+import by.diplom.workspace.worker.model.user.profile.UserSocialLink;
+import by.diplom.workspace.worker.model.user.settings.UserNotificationSettings;
+import by.diplom.workspace.worker.model.user.settings.UserPrivacySettings;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -40,6 +40,9 @@ public abstract class User {
 
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
+
+    @Column(name = "avatar_path")
+    private String avatarPath;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

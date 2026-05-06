@@ -1,4 +1,4 @@
-package by.diplom.workspace.model.user.profile;
+package by.diplom.workspace.worker.model.user.profile;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

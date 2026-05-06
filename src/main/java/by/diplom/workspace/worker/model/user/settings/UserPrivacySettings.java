@@ -1,4 +1,4 @@
-package by.diplom.workspace.model.user.settings;
+package by.diplom.workspace.worker.model.user.settings;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import by.diplom.workspace.model.user.User;
+import by.diplom.workspace.worker.model.user.User;
 import java.util.UUID;
 
 @Getter

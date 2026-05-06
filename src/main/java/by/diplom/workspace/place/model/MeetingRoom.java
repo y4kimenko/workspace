@@ -14,7 +14,7 @@ import jakarta.validation.constraints.NotNull;
 @Getter
 @Setter
 @Entity
-@DiscriminatorValue("MEETINGROOM")
+@DiscriminatorValue("MEETING_ROOM")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MeetingRoom extends Place {
 

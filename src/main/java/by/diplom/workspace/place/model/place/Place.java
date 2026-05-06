@@ -50,7 +50,7 @@ public abstract class Place {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "place_equipments",
+            name = "places_equipments",
             joinColumns = @JoinColumn(name = "place_id"),
             inverseJoinColumns = @JoinColumn(name = "equipment_id"),
             uniqueConstraints = {
@@ -65,7 +65,7 @@ public abstract class Place {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "place_advantages",
+            name = "places_advantages",
             joinColumns = @JoinColumn(name = "place_id"),
             inverseJoinColumns = @JoinColumn(name = "advantage_id"),
             uniqueConstraints = {

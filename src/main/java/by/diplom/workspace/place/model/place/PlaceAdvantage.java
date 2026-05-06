@@ -18,7 +18,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(
-        name = "place_advantages",
+        name = "place_advantage",
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uk_place_advantage_name",

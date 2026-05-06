@@ -58,4 +58,5 @@ public class UserEmail {
         this.verified = verified;
         this.primaryEmail = primaryEmail;
     }
+
 }

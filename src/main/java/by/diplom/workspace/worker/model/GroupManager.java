@@ -8,8 +8,8 @@ import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -18,7 +18,7 @@ import java.util.List;
 public class GroupManager extends User {
 
     @OneToMany(mappedBy = "groupManager")
-    private final List<Employee> employees = new ArrayList<>();
+    private final Set<Employee> employees = new HashSet<>();
 
     public GroupManager(
             String fullName,

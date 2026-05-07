@@ -1,5 +1,7 @@
 package by.diplom.workspace.worker.model.user;
 
+import by.diplom.workspace.shared.time.TimeZoneAware;
+import by.diplom.workspace.shared.time.TimeZoneSupport;
 import by.diplom.workspace.worker.model.user.profile.position.DepartmentPosition;
 import by.diplom.workspace.worker.model.user.profile.SocialPlatform;
 import by.diplom.workspace.worker.model.user.profile.UserEmail;
@@ -7,12 +9,28 @@ import by.diplom.workspace.worker.model.user.settings.UserAppearanceSettings;
 import by.diplom.workspace.worker.model.user.profile.UserSocialLink;
 import by.diplom.workspace.worker.model.user.settings.UserNotificationSettings;
 import by.diplom.workspace.worker.model.user.settings.UserPrivacySettings;
-import jakarta.persistence.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -26,7 +44,7 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class User {
+public abstract class User implements TimeZoneAware {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -48,10 +66,11 @@ public abstract class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(name = "timezone", nullable = false)
-    private String timezone = "Europe/Minsk";
+    @Setter(AccessLevel.NONE)
+    @Column(name = "timezone", nullable = false, length = 64)
+    private String timeZone = TimeZoneSupport.DEFAULT_TIME_ZONE;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "department_position_id", nullable = false)
     private DepartmentPosition departmentPosition;
 
@@ -93,17 +112,17 @@ public abstract class User {
     )
     private UserPrivacySettings privacySettings;
 
-    public User(
+    protected User(
             String fullName,
             String nickname,
             String passwordHash,
-            String timezone,
+            String timeZone,
             DepartmentPosition departmentPosition
     ) {
         this.fullName = fullName;
         this.nickname = nickname;
         this.passwordHash = passwordHash;
-        this.timezone = timezone;
+        this.timeZone = TimeZoneSupport.normalizeOrDefault(timeZone);
         this.departmentPosition = departmentPosition;
 
         this.appearanceSettings = new UserAppearanceSettings(this);
@@ -111,12 +130,13 @@ public abstract class User {
         this.privacySettings = new UserPrivacySettings(this);
     }
 
-    public void changeTimezone(String timezone) {
-        if (timezone == null || timezone.isBlank()) {
-            throw new IllegalArgumentException("Timezone must not be empty");
-        }
 
-        this.timezone = timezone;
+    public void changeTimeZone(String timeZone) {
+        this.timeZone = TimeZoneSupport.validateAndNormalize(timeZone);
+    }
+
+    public void resetTimeZoneToDefault() {
+        this.timeZone = TimeZoneSupport.DEFAULT_TIME_ZONE;
     }
 
     public void addEmail(String email, boolean verified, boolean primaryEmail) {
@@ -132,4 +152,5 @@ public abstract class User {
         UserSocialLink socialLink = new UserSocialLink(this, platform, url);
         socialLinks.add(socialLink);
     }
+
 }

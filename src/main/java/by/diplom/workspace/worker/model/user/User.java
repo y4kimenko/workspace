@@ -1,5 +1,6 @@
 package by.diplom.workspace.worker.model.user;
 
+import by.diplom.workspace.favorite.model.FavoritePlace;
 import by.diplom.workspace.shared.time.TimeZoneAware;
 import by.diplom.workspace.shared.time.TimeZoneSupport;
 import by.diplom.workspace.worker.model.user.profile.position.DepartmentPosition;
@@ -34,7 +35,9 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -111,6 +114,13 @@ public abstract class User implements TimeZoneAware {
             optional = false
     )
     private UserPrivacySettings privacySettings;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<FavoritePlace> favoritePlaces = new HashSet<>();
 
     protected User(
             String fullName,

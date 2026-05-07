@@ -1,7 +1,6 @@
 package by.diplom.workspace.booking.model;
 
-import by.diplom.workspace.shared.time.TimeZoneAware;
-import by.diplom.workspace.shared.time.TimeZoneSupport;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +21,7 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class Booking implements TimeZoneAware {
+public abstract class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,9 +32,6 @@ public abstract class Booking implements TimeZoneAware {
 
     @Column(name = "end_at", nullable = false)
     private Instant endAt;
-
-    @Column(name = "time_zone", nullable = false, length = 64)
-    private String timeZone = TimeZoneSupport.DEFAULT_TIME_ZONE;
 
 
     protected Booking(
@@ -51,31 +47,12 @@ public abstract class Booking implements TimeZoneAware {
 
         this.startAt = startAt.atZone(zoneId).toInstant();
         this.endAt = endAt.atZone(zoneId).toInstant();
-        this.timeZone = zoneId.getId();
     }
 
-    public LocalDateTime getStartAtInBookingTimeZone() {
-        return LocalDateTime.ofInstant(startAt, getZoneId());
-    }
 
-    public LocalDateTime getEndAtInBookingTimeZone() {
-        return LocalDateTime.ofInstant(endAt, getZoneId());
-    }
 
     public Duration getDuration() {
         return Duration.between(startAt, endAt);
-    }
-
-    public boolean overlapsWith(LocalDateTime otherStartAt, LocalDateTime otherEndAt) {
-        validateDateTime(otherStartAt, otherEndAt);
-
-        ZoneId zoneId = getZoneId();
-
-        Instant otherStartInstant = otherStartAt.atZone(zoneId).toInstant();
-        Instant otherEndInstant = otherEndAt.atZone(zoneId).toInstant();
-
-        return this.startAt.isBefore(otherEndInstant)
-                && this.endAt.isAfter(otherStartInstant);
     }
 
     public boolean overlapsWith(Instant otherStartAt, Instant otherEndAt) {
@@ -98,21 +75,6 @@ public abstract class Booking implements TimeZoneAware {
 
         this.startAt = newStartAt.atZone(zoneId).toInstant();
         this.endAt = newEndAt.atZone(zoneId).toInstant();
-        this.timeZone = zoneId.getId();
-    }
-
-    protected void changePeriod(
-            LocalDateTime newStartAt,
-            LocalDateTime newEndAt,
-            String newTimeZone
-    ) {
-        validateDateTime(newStartAt, newEndAt);
-
-        ZoneId zoneId = TimeZoneSupport.toZoneId(newTimeZone);
-
-        this.startAt = newStartAt.atZone(zoneId).toInstant();
-        this.endAt = newEndAt.atZone(zoneId).toInstant();
-        this.timeZone = zoneId.getId();
     }
 
     private static void validateDateTime(

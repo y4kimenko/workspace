@@ -1,7 +1,7 @@
 package by.diplom.workspace.booking.model.meetingRoom.participant;
 
 import by.diplom.workspace.booking.model.meetingRoom.MeetingRoomBooking;
-import by.diplom.workspace.shared.time.TimeZoneSupport;
+
 import by.diplom.workspace.worker.model.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,7 +23,6 @@ import lombok.Setter;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.UUID;
 
 @Getter
@@ -69,10 +68,6 @@ public class BookingParticipant {
     @Column(name = "response_date")
     private Instant responseDate;
 
-    @Setter(AccessLevel.NONE)
-    @Column(name = "response_time_zone", length = 64)
-    private String responseTimeZone;
-
 
     public BookingParticipant(
             MeetingRoomBooking meetingRoomBooking,
@@ -85,20 +80,13 @@ public class BookingParticipant {
         this.status = ParticipantStatus.PENDING;
     }
 
-    public ZoneId getResponseZoneId() {
-        if (responseTimeZone == null) {
-            return null;
-        }
-
-        return TimeZoneSupport.toZoneId(responseTimeZone);
-    }
 
     public LocalDateTime getResponseDateInResponseTimeZone() {
-        if (responseDate == null || responseTimeZone == null) {
+        if (responseDate == null || user.getZoneId() == null) {
             return null;
         }
 
-        return LocalDateTime.ofInstant(responseDate, getResponseZoneId());
+        return LocalDateTime.ofInstant(responseDate, user.getZoneId());
     }
 
 
@@ -122,6 +110,5 @@ public class BookingParticipant {
 
     private void setResponseData() {
         this.responseDate = Instant.now();
-        this.responseTimeZone = user.getZoneId().getId();
     }
 }

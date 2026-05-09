@@ -1,8 +1,9 @@
 package by.diplom.workspace.worker.model.user;
 
 import by.diplom.workspace.favorite.model.FavoritePlace;
-import by.diplom.workspace.shared.time.TimeZoneAware;
-import by.diplom.workspace.shared.time.TimeZoneSupport;
+import by.diplom.workspace.worker.model.user.profile.Pronoun;
+import by.diplom.workspace.worker.model.user.time.TimeZoneAware;
+import by.diplom.workspace.worker.model.user.time.TimeZoneSupport;
 import by.diplom.workspace.worker.model.user.profile.position.DepartmentPosition;
 import by.diplom.workspace.worker.model.user.profile.SocialPlatform;
 import by.diplom.workspace.worker.model.user.profile.UserEmail;
@@ -15,6 +16,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -64,6 +67,13 @@ public abstract class User implements TimeZoneAware {
 
     @Column(name = "avatar_path")
     private String avatarPath;
+
+    @Column(name = "bio", length = 300)
+    private String bio;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "pronoun", length = 20)
+    private Pronoun pronoun = Pronoun.NOT_SPECIFIED;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -163,4 +173,15 @@ public abstract class User implements TimeZoneAware {
         socialLinks.add(socialLink);
     }
 
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void changePronoun(Pronoun pronoun) {
+        this.pronoun = pronoun != null ? pronoun : Pronoun.NOT_SPECIFIED;
+    }
+
+    public void changePassword(String newPasswordHash) {
+        this.passwordHash = newPasswordHash;
+    }
 }

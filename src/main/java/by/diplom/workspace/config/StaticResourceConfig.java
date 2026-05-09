@@ -13,3 +13,5 @@ public class StaticResourceConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:uploads/");
     }
 }
+
+

@@ -1,4 +1,4 @@
-package by.diplom.workspace.shared.time;
+package by.diplom.workspace.worker.model.user.time;
 
 import java.time.DateTimeException;
 import java.time.ZoneId;

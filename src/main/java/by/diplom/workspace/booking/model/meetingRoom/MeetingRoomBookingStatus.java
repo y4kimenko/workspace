@@ -1,6 +1,6 @@
 package by.diplom.workspace.booking.model.meetingRoom;
 
-public enum  MeetingRoomBookingStatus {
+public enum MeetingRoomBookingStatus {
     PENDING_RESPONSES,
     CONFIRMED,
     CANCELLED,

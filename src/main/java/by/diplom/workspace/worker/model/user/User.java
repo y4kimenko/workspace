@@ -5,16 +5,15 @@ import by.diplom.workspace.email.exception.CannotDeletePrimaryEmailException;
 import by.diplom.workspace.email.exception.EmailNotFoundException;
 import by.diplom.workspace.favorite.model.FavoritePlace;
 import by.diplom.workspace.worker.model.user.profile.Pronoun;
-import by.diplom.workspace.worker.model.user.time.TimeZoneAware;
-import by.diplom.workspace.worker.model.user.time.TimeZoneSupport;
-import by.diplom.workspace.worker.model.user.profile.position.DepartmentPosition;
 import by.diplom.workspace.worker.model.user.profile.SocialPlatform;
 import by.diplom.workspace.worker.model.user.profile.UserEmail;
-import by.diplom.workspace.worker.model.user.settings.UserAppearanceSettings;
 import by.diplom.workspace.worker.model.user.profile.UserSocialLink;
+import by.diplom.workspace.worker.model.user.profile.position.DepartmentPosition;
+import by.diplom.workspace.worker.model.user.settings.UserAppearanceSettings;
 import by.diplom.workspace.worker.model.user.settings.UserNotificationSettings;
 import by.diplom.workspace.worker.model.user.settings.UserPrivacySettings;
-
+import by.diplom.workspace.worker.model.user.time.TimeZoneAware;
+import by.diplom.workspace.worker.model.user.time.TimeZoneSupport;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
@@ -37,7 +36,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -95,7 +93,7 @@ public abstract class User implements TimeZoneAware {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<UserEmail> emails = new ArrayList<>(); // +-
+    private List<UserEmail> emails = new ArrayList<>(); // +
 
     @OneToMany(
             mappedBy = "user",

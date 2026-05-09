@@ -7,4 +7,5 @@ public record UpdateNicknameRequest(
         @NotBlank(message = "Никнейм не может быть пустым")
         @Size(min = 3, max = 32, message = "Никнейм должен быть от 3 до 32 символов")
         String nickname
-) {}
+) {
+}

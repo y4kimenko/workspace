@@ -1,17 +1,18 @@
 package by.diplom.workspace.worker.controller;
 
+import by.diplom.workspace.security.AppUserDetails;
+import by.diplom.workspace.worker.dto.request.UpdateNicknameRequest;
 import by.diplom.workspace.worker.dto.request.UpdatePasswordRequest;
 import by.diplom.workspace.worker.dto.request.UpdatePronounRequest;
-import by.diplom.workspace.worker.dto.response.UserPronounResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import by.diplom.workspace.authorization.AppUserDetails;
-import by.diplom.workspace.worker.dto.request.UpdateNicknameRequest;
 import by.diplom.workspace.worker.dto.response.UserNicknameResponse;
+import by.diplom.workspace.worker.dto.response.UserPronounResponse;
 import by.diplom.workspace.worker.model.user.profile.Pronoun;
 import by.diplom.workspace.worker.service.UserProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +32,7 @@ public class UserProfileController {
     private final UserProfileService userProfileService;
 
     @PatchMapping("/me/nickname")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.OK)
     public UserNicknameResponse updateMyNickname(
             @AuthenticationPrincipal AppUserDetails currentUser,
@@ -40,6 +42,7 @@ public class UserProfileController {
     }
 
     @PatchMapping("/me/password")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204 — успех, тело не нужно
     public void updateMyPassword(
             @AuthenticationPrincipal AppUserDetails currentUser,
@@ -49,6 +52,7 @@ public class UserProfileController {
     }
 
     @PatchMapping("/me/pronoun")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.OK)
     public UserPronounResponse updateMyPronoun(
             @AuthenticationPrincipal AppUserDetails currentUser,
@@ -58,6 +62,7 @@ public class UserProfileController {
     }
 
     @GetMapping("/pronouns")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.OK)
     public List<Map<String, String>> getAvailablePronouns() {
         return Arrays.stream(Pronoun.values())

@@ -8,4 +8,5 @@ public record UserEmailResponse(
         boolean verified,
         boolean primary,
         boolean publicEmail
-) {}
+) {
+}

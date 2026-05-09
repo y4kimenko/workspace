@@ -8,4 +8,5 @@ public record UserPronounResponse(
         UUID id,
         Pronoun pronoun,         // "HE_HIM" — для логики на фронтенде
         String displayName       // "он/его" — для отображения
-) { }
+) {
+}

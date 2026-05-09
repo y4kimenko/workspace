@@ -13,4 +13,14 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.emails WHERE u.id = :id")
     Optional<User> findByIdWithEmails(@Param("id") UUID id);
+
+    Optional<User> findByNickname(String nickname);
+
+    @Query("""
+            SELECT u FROM User u
+            JOIN u.emails e
+            WHERE e.email = :email
+            AND e.verified = true
+            """)
+    Optional<User> findByVerifiedEmail(@Param("email") String email);
 }

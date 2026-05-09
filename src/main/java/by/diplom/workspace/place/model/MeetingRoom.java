@@ -4,12 +4,12 @@ import by.diplom.workspace.place.model.place.Place;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import lombok.AccessLevel;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import jakarta.validation.constraints.NotNull;
 
 @Getter
 @Setter

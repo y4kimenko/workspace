@@ -6,4 +6,5 @@ import jakarta.validation.constraints.NotBlank;
 public record AddEmailRequest(
         @NotBlank @Email(message = "Некорректный формат email")
         String email
-) {}
+) {
+}

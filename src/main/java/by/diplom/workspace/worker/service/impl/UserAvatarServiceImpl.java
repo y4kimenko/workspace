@@ -1,8 +1,8 @@
 package by.diplom.workspace.worker.service.impl;
 
 
-import by.diplom.workspace.worker.model.user.User;
 import by.diplom.workspace.worker.dto.UserAvatarResponse;
+import by.diplom.workspace.worker.model.user.User;
 import by.diplom.workspace.worker.repository.UserRepository;
 import by.diplom.workspace.worker.service.UserAvatarService;
 import lombok.RequiredArgsConstructor;

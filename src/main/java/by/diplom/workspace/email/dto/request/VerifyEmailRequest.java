@@ -12,4 +12,5 @@ public record VerifyEmailRequest(
         @NotBlank(message = "Код не может быть пустым")
         @Size(min = 6, max = 6, message = "Код должен состоять из 6 символов")
         String code
-) {}
+) {
+}

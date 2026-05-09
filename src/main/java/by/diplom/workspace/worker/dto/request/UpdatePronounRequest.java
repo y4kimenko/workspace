@@ -6,4 +6,5 @@ import jakarta.validation.constraints.NotNull;
 public record UpdatePronounRequest(
         @NotNull(message = "Местоимение не может быть null — используй NOT_SPECIFIED")
         Pronoun pronoun
-) { }
+) {
+}

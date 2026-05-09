@@ -1,12 +1,19 @@
 package by.diplom.workspace.worker.model.user.settings;
 
-import jakarta.persistence.*;
+import by.diplom.workspace.worker.model.user.User;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import by.diplom.workspace.worker.model.user.User;
 import java.util.UUID;
 
 @Getter

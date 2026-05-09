@@ -4,18 +4,17 @@ package by.diplom.workspace.booking.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Id;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.util.UUID;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.UUID;
 
 
 @Getter
@@ -48,7 +47,6 @@ public abstract class Booking {
         this.startAt = startAt.atZone(zoneId).toInstant();
         this.endAt = endAt.atZone(zoneId).toInstant();
     }
-
 
 
     public Duration getDuration() {

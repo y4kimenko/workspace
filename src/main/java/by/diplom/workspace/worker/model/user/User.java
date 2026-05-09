@@ -1,5 +1,8 @@
 package by.diplom.workspace.worker.model.user;
 
+import by.diplom.workspace.email.exception.CannotDeleteLastEmailException;
+import by.diplom.workspace.email.exception.CannotDeletePrimaryEmailException;
+import by.diplom.workspace.email.exception.EmailNotFoundException;
 import by.diplom.workspace.favorite.model.FavoritePlace;
 import by.diplom.workspace.worker.model.user.profile.Pronoun;
 import by.diplom.workspace.worker.model.user.time.TimeZoneAware;
@@ -92,7 +95,7 @@ public abstract class User implements TimeZoneAware {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<UserEmail> emails = new ArrayList<>();
+    private List<UserEmail> emails = new ArrayList<>(); // +-
 
     @OneToMany(
             mappedBy = "user",
@@ -166,6 +169,78 @@ public abstract class User implements TimeZoneAware {
 
         UserEmail userEmail = new UserEmail(this, email, verified, primaryEmail);
         emails.add(userEmail);
+    }
+
+    public void removeEmail(String emailToDelete) {
+        if (emails.size() <= 1) throw new CannotDeleteLastEmailException();
+
+        UserEmail target = emails.stream()
+                .filter(e -> e.getEmail().equals(emailToDelete))
+                .findFirst()
+                .orElseThrow(() -> new EmailNotFoundException(emailToDelete));
+
+        if (target.isPrimaryEmail()) throw new CannotDeletePrimaryEmailException();
+
+        boolean wasPublic = target.isPublicEmail();
+        emails.remove(target);
+
+        // Если удалили единственный публичный —
+        // автоматически делаем публичным primary email
+        if (wasPublic) {
+            boolean hasAnyPublic = emails.stream().anyMatch(UserEmail::isPublicEmail);
+            if (!hasAnyPublic) {
+                emails.stream()
+                        .filter(UserEmail::isPrimaryEmail)
+                        .findFirst()
+                        .ifPresent(UserEmail::makePublic);
+            }
+        }
+    }
+
+    public void changePrimaryEmail(String newPrimaryEmail) {
+        boolean found = false;
+
+        for (UserEmail userEmail : emails) {
+            if (userEmail.getEmail().equals(newPrimaryEmail)) {
+                // Только подтверждённый email может стать основным
+                if (!userEmail.isVerified()) {
+                    throw new IllegalStateException(
+                            "Нельзя сделать основным неподтверждённый email"
+                    );
+                }
+                userEmail.makePrimary();
+                found = true;
+            } else {
+                userEmail.revokePrimary(); // снимаем primary со всех остальных
+            }
+        }
+
+        if (!found) {
+            throw new EmailNotFoundException(newPrimaryEmail);
+        }
+    }
+
+    public void changePublicEmail(String newPublicEmail) {
+        boolean found = false;
+
+        for (UserEmail userEmail : emails) {
+            if (userEmail.getEmail().equals(newPublicEmail)) {
+                // Только подтверждённый email может стать публичным
+                if (!userEmail.isVerified()) {
+                    throw new IllegalStateException(
+                            "Нельзя сделать публичным неподтверждённый email"
+                    );
+                }
+                userEmail.makePublic();
+                found = true;
+            } else {
+                userEmail.revokePublic(); // снимаем public со всех остальных
+            }
+        }
+
+        if (!found) {
+            throw new EmailNotFoundException(newPublicEmail);
+        }
     }
 
     public void addSocialLink(SocialPlatform platform, String url) {

@@ -1,13 +1,14 @@
-package by.diplom.workspace.email.service;
+package by.diplom.workspace.email.component;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+
+@Component
 @RequiredArgsConstructor
-public class EmailSenderService {
+public class EmailSender {
 
     private final JavaMailSender mailSender;
 

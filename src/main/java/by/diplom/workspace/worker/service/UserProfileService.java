@@ -9,9 +9,11 @@ import by.diplom.workspace.worker.dto.response.UserPronounResponse;
 import java.util.UUID;
 
 public interface UserProfileService {
-    public UserNicknameResponse updateNickname(UUID userId, UpdateNicknameRequest request);
+    UserNicknameResponse updateNickname(UUID userId, UpdateNicknameRequest request);
 
-    public UserPronounResponse updatePronoun(UUID userId, UpdatePronounRequest request);
+    UserPronounResponse updatePronoun(UUID userId, UpdatePronounRequest request);
 
-    public void updatePassword(UUID userId, UpdatePasswordRequest request);
+    void updatePassword(UUID userId, UpdatePasswordRequest request);
+
+
 }

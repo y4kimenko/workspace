@@ -43,6 +43,9 @@ public class UserEmail {
     @Column(name = "is_primary", nullable = false)
     private boolean primaryEmail = false;
 
+    @Column(name = "is_public", nullable = false)
+    private boolean publicEmail = false;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
@@ -69,6 +72,14 @@ public class UserEmail {
 
     public void revokePrimary() {
         this.primaryEmail = false;
+    }
+
+    public void makePublic() {
+        this.publicEmail = true;
+    }
+
+    public void revokePublic() {
+        this.publicEmail = false;
     }
 
 }

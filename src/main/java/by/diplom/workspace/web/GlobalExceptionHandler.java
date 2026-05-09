@@ -1,5 +1,7 @@
 package by.diplom.workspace.web;
 
+import by.diplom.workspace.email.exception.EmailAlreadyExistsException;
+import by.diplom.workspace.email.exception.InvalidVerificationCodeException;
 import by.diplom.workspace.web.exception.NotFoundException;
 import by.diplom.workspace.worker.exception.NicknameAlreadyExistsException;
 import by.diplom.workspace.worker.exception.password.InvalidPasswordException;
@@ -39,6 +41,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PasswordMismatchException.class)
     public ProblemDetail handlePasswordMismatch(PasswordMismatchException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ProblemDetail handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidVerificationCodeException.class)
+    public ProblemDetail InvalidVerificationCode(InvalidVerificationCodeException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 }

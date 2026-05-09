@@ -60,20 +60,20 @@ public abstract class User implements TimeZoneAware {
     private String fullName;
 
     @Column(nullable = false, unique = true)
-    private String nickname;
+    private String nickname; //+
 
     @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+    private String passwordHash; //+
 
     @Column(name = "avatar_path")
-    private String avatarPath;
+    private String avatarPath; //+
 
     @Column(name = "bio", length = 300)
-    private String bio;
+    private String bio; //+
 
     @Enumerated(EnumType.STRING)
     @Column(name = "pronoun", length = 20)
-    private Pronoun pronoun = Pronoun.NOT_SPECIFIED;
+    private Pronoun pronoun = Pronoun.NOT_SPECIFIED; //+
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

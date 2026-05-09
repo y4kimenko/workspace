@@ -59,4 +59,16 @@ public class UserEmail {
         this.primaryEmail = primaryEmail;
     }
 
+    public void markAsVerified() {
+        this.verified = true;
+    }
+
+    public void makePrimary() {
+        this.primaryEmail = true;
+    }
+
+    public void revokePrimary() {
+        this.primaryEmail = false;
+    }
+
 }

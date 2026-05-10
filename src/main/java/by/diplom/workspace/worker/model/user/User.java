@@ -137,13 +137,11 @@ public abstract class User implements TimeZoneAware {
             String fullName,
             String nickname,
             String passwordHash,
-            String timeZone,
             DepartmentPosition departmentPosition
     ) {
         this.fullName = fullName;
         this.nickname = nickname;
         this.passwordHash = passwordHash;
-        this.timeZone = TimeZoneSupport.normalizeOrDefault(timeZone);
         this.departmentPosition = departmentPosition;
 
         this.appearanceSettings = new UserAppearanceSettings(this);

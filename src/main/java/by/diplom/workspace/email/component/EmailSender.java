@@ -25,4 +25,22 @@ public class EmailSender {
 
         mailSender.send(message);
     }
+
+    public void sendWelcomeEmail(String to, String fullName, String nickname, String rawPassword) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Добро пожаловать в Workspace!");
+        message.setText("""
+                Здравствуйте, %s!
+                
+                Вы были зарегистрированы в системе Workspace.
+                
+                Ваши данные для входа:
+                  Логин: %s
+                  Пароль: %s
+                
+                Рекомендуем сменить пароль после первого входа.
+                """.formatted(fullName, nickname, rawPassword));
+        mailSender.send(message);
+    }
 }

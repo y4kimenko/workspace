@@ -24,10 +24,9 @@ public class GroupManager extends User {
             String fullName,
             String nickname,
             String passwordHash,
-            String timezone,
             DepartmentPosition departmentPosition
     ) {
-        super(fullName, nickname, passwordHash, timezone, departmentPosition);
+        super(fullName, nickname, passwordHash, departmentPosition);
     }
 
     public void addEmployee(Employee employee) {

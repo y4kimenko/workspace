@@ -25,10 +25,9 @@ public class Employee extends User {
     public Employee(
             String fullName,
             String nickname,
-            String timezone,
             String passwordHash,
             DepartmentPosition departmentPosition
     ) {
-        super(fullName, nickname, passwordHash, timezone, departmentPosition);
+        super(fullName, nickname, passwordHash, departmentPosition);
     }
 }

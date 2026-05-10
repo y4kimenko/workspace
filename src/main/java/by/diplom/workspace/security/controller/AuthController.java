@@ -1,6 +1,8 @@
 package by.diplom.workspace.security.controller;
 
 import by.diplom.workspace.security.AppUserDetails;
+import by.diplom.workspace.security.dto.LoginRequestDto;
+import by.diplom.workspace.security.dto.TokenResponseDto;
 import by.diplom.workspace.security.service.AppUserDetailsService;
 import by.diplom.workspace.security.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class AuthController {
     private final JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<TokenResponseDto> login(@RequestBody LoginRequestDto request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
@@ -36,12 +38,7 @@ public class AuthController {
         } else {
             token = jwtService.generateTokenForAdmin(userDetails);
         }
-        return ResponseEntity.ok(new TokenResponse(token));
+        return ResponseEntity.ok(new TokenResponseDto(token));
     }
 
-    public record LoginRequest(String username, String password) {
-    }
-
-    public record TokenResponse(String token) {
-    }
 }

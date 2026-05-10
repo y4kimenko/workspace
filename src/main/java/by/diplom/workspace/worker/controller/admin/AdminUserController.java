@@ -2,7 +2,7 @@ package by.diplom.workspace.worker.controller.admin;
 
 import by.diplom.workspace.worker.dto.user.request.CreateUserRequestDto;
 import by.diplom.workspace.worker.dto.user.response.CreateUserResponseDto;
-import by.diplom.workspace.worker.service.admin.inter.AdminUserService;
+import by.diplom.workspace.worker.service.AdminUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

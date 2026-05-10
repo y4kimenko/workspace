@@ -1,6 +1,5 @@
 package by.diplom.workspace.email.model;
 
-import by.diplom.workspace.worker.model.user.profile.UserEmail;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

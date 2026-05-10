@@ -1,7 +1,7 @@
 package by.diplom.workspace.email.mapper;
 
 import by.diplom.workspace.email.dto.response.UserEmailResponseDto;
-import by.diplom.workspace.worker.model.user.profile.UserEmail;
+import by.diplom.workspace.email.model.UserEmail;
 
 public class UserEmailMapper {
     public static UserEmailResponseDto toResponseDto(UserEmail e) {

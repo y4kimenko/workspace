@@ -1,7 +1,7 @@
 package by.diplom.workspace.worker.model;
 
 import by.diplom.workspace.worker.model.user.User;
-import by.diplom.workspace.worker.model.user.profile.position.DepartmentPosition;
+import by.diplom.workspace.position.model.DepartmentPosition;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;

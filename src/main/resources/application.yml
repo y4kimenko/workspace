@@ -28,13 +28,14 @@ spring:
       max-request-size: 4MB
 
   mail:
-    host: smtp.gmail.com
+    host: smtp.zoho.eu
     port: 587
     username: ${MAIL_USERNAME}  # твой gmail адрес
     password: ${MAIL_PASSWORD}  # App Password, не обычный пароль!
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
 
 app:
   jwt:

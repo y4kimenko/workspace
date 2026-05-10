@@ -45,3 +45,9 @@ app:
     username: admin
     password-hash: ${APP_ADMIN_PASSWORD_HASH}
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+

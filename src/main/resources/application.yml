@@ -27,17 +27,18 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: "nikita200521april@gmail.com"  # твой gmail адрес
-    password: "dyts ktga usuk kizi"  # App Password, не обычный пароль!
+    username: ${MAIL_USERNAME}  # твой gmail адрес
+    password: ${MAIL_PASSWORD}  # App Password, не обычный пароль!
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
 app:
   jwt:
-    secret: chin-Chan-Chong-Chi-chicha-Chochi-chinchazanji-wood-Tan-Tun   # минимум 32 байта в base64
+    secret: ${APP_JWT_SECRET}   # минимум 32 байта в base64
     expiration-ms: 86400000   # 24 часа
 
   admin:
     username: admin
-    password-hash: '$2a$10$dcgY8MqOH0a47FgZaBmp1epgg8uGfEuOYlzkHd1c2Fuc90icPnGIa'
+    password-hash: ${APP_ADMIN_PASSWORD_HASH}
+

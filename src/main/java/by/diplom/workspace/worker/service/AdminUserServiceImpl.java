@@ -1,5 +1,6 @@
 package by.diplom.workspace.worker.service;
 
+
 import by.diplom.workspace.worker.component.NicknameGenerator;
 import by.diplom.workspace.worker.component.PasswordGenerator;
 import by.diplom.workspace.worker.dto.user.request.CreateUserRequestDto;
@@ -11,10 +12,11 @@ import by.diplom.workspace.worker.model.user.User;
 import by.diplom.workspace.position.model.DepartmentPosition;
 import by.diplom.workspace.position.repository.DepartmentPositionRepository;
 import by.diplom.workspace.worker.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 @Service
 @RequiredArgsConstructor
@@ -59,4 +61,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         return new CreateUserResponseDto(user.getId(), nickname);
     }
+
+
+
 }

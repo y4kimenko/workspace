@@ -5,6 +5,7 @@ import by.diplom.workspace.worker.dto.profile.request.UpdateNicknameRequestDto;
 import by.diplom.workspace.worker.dto.profile.request.UpdatePasswordRequestDto;
 import by.diplom.workspace.worker.dto.profile.request.UpdatePronounRequestDto;
 import by.diplom.workspace.worker.dto.profile.response.UserNicknameResponseDto;
+import by.diplom.workspace.worker.dto.profile.response.UserPublicProfileResponseDto;
 import by.diplom.workspace.worker.dto.profile.response.UserPronounResponseDto;
 import by.diplom.workspace.worker.model.user.profile.Pronoun;
 import by.diplom.workspace.worker.service.user.inter.UserProfileService;
@@ -27,12 +28,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
+@PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
 @RequiredArgsConstructor
 public class UserProfileController {
     private final UserProfileService userProfileService;
 
     @PatchMapping("/me/nickname")
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.OK)
     public UserNicknameResponseDto updateMyNickname(
             @AuthenticationPrincipal AppUserDetails currentUser,
@@ -42,7 +43,6 @@ public class UserProfileController {
     }
 
     @PatchMapping("/me/password")
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204 — успех, тело не нужно
     public void updateMyPassword(
             @AuthenticationPrincipal AppUserDetails currentUser,
@@ -52,7 +52,6 @@ public class UserProfileController {
     }
 
     @PatchMapping("/me/pronoun")
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.OK)
     public UserPronounResponseDto updateMyPronoun(
             @AuthenticationPrincipal AppUserDetails currentUser,
@@ -62,7 +61,6 @@ public class UserProfileController {
     }
 
     @GetMapping("/pronouns")
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.OK)
     public List<Map<String, String>> getAvailablePronouns() {
         return Arrays.stream(Pronoun.values())
@@ -72,4 +70,11 @@ public class UserProfileController {
                 ))
                 .toList();
     }
+
+    @GetMapping("/me/profile")
+    @ResponseStatus(HttpStatus.OK)
+    public UserPublicProfileResponseDto getMyProfile(@AuthenticationPrincipal AppUserDetails currentUser) {
+        return userProfileService.getMyProfile(currentUser.getId());
+    }
+
 }

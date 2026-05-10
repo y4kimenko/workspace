@@ -1,10 +1,13 @@
 package by.diplom.workspace.worker.service.user.impl;
 
+import by.diplom.workspace.email.model.UserEmail;
+import by.diplom.workspace.position.model.DepartmentPosition;
 import by.diplom.workspace.worker.dto.profile.request.UpdateNicknameRequestDto;
 import by.diplom.workspace.worker.dto.profile.request.UpdatePasswordRequestDto;
 import by.diplom.workspace.worker.dto.profile.request.UpdatePronounRequestDto;
 import by.diplom.workspace.worker.dto.profile.response.UserNicknameResponseDto;
 import by.diplom.workspace.worker.dto.profile.response.UserPronounResponseDto;
+import by.diplom.workspace.worker.dto.profile.response.UserPublicProfileResponseDto;
 import by.diplom.workspace.worker.exception.NicknameAlreadyExistsException;
 import by.diplom.workspace.worker.exception.UserNotFoundException;
 import by.diplom.workspace.worker.exception.password.InvalidPasswordException;
@@ -12,11 +15,12 @@ import by.diplom.workspace.worker.exception.password.PasswordMismatchException;
 import by.diplom.workspace.worker.model.user.User;
 import by.diplom.workspace.worker.repository.UserRepository;
 import by.diplom.workspace.worker.service.user.inter.UserProfileService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -85,5 +89,49 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         user.changePassword(passwordEncoder.encode(request.newPassword()));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserPublicProfileResponseDto getMyProfile(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        // Должность и отдел
+        UserPublicProfileResponseDto.DepartmentPositionInfo dpInfo = null;
+        if (user.getDepartmentPosition() != null) {
+            DepartmentPosition dp = user.getDepartmentPosition();
+            dpInfo = new UserPublicProfileResponseDto.DepartmentPositionInfo(
+                    dp.getPosition() != null ? dp.getPosition().getName() : null,
+                    dp.getDepartment() != null ? dp.getDepartment().getName() : null
+            );
+        }
+
+        // Публичный email
+        String publicEmail = user.getEmails().stream()
+                .filter(UserEmail::isPublicEmail)
+                .map(UserEmail::getEmail)
+                .findFirst()
+                .orElse(null);
+
+        // Социальные сети
+        List<UserPublicProfileResponseDto.SocialLinkInfo> socialLinks = user.getSocialLinks().stream()
+                .map(link -> new UserPublicProfileResponseDto.SocialLinkInfo(
+                        link.getId(),
+                        link.getPlatform().getCode(),
+                        link.getPlatform().getName(),
+                        link.getUrl()))
+                .toList();
+
+        return new UserPublicProfileResponseDto(
+                user.getFullName(),
+                user.getNickname(),
+                user.getAvatarPath(),
+                user.getBio(),
+                user.getPronoun().getDisplayName(),
+                dpInfo,
+                publicEmail,
+                socialLinks
+        );
     }
 }

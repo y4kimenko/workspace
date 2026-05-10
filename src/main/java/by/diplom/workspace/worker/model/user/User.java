@@ -8,7 +8,7 @@ import by.diplom.workspace.socialLink.model.Pronoun;
 import by.diplom.workspace.email.model.UserEmail;
 import by.diplom.workspace.position.model.DepartmentPosition;
 import by.diplom.workspace.worker.model.user.settings.UserAppearanceSettings;
-import by.diplom.workspace.worker.model.user.settings.UserNotificationSettings;
+import by.diplom.workspace.notification.model.UserNotificationSettings;
 import by.diplom.workspace.worker.model.user.settings.UserPrivacySettings;
 import by.diplom.workspace.worker.model.user.time.TimeZoneAware;
 import by.diplom.workspace.worker.model.user.time.TimeZoneSupport;
@@ -59,20 +59,20 @@ public abstract class User implements TimeZoneAware {
     private String fullName;
 
     @Column(nullable = false, unique = true)
-    private String nickname; //+
+    private String nickname; //+ user, -admin
 
     @Column(name = "password_hash", nullable = false)
-    private String passwordHash; //+
+    private String passwordHash; //+ user, -admin
 
     @Column(name = "avatar_path")
-    private String avatarPath; //+
+    private String avatarPath; //+ user, -admin
 
     @Column(name = "bio", length = 300)
-    private String bio; //+
+    private String bio; //+ user, -admin
 
     @Enumerated(EnumType.STRING)
     @Column(name = "pronoun", length = 20)
-    private Pronoun pronoun = Pronoun.NOT_SPECIFIED; //+
+    private Pronoun pronoun = Pronoun.NOT_SPECIFIED; //+ user, - admin
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -84,7 +84,7 @@ public abstract class User implements TimeZoneAware {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_position_id")
-    private DepartmentPosition departmentPosition;
+    private DepartmentPosition departmentPosition; //+ user, +- admin(создание да, но не управления их у пользователя)
 
     @OneToMany(
             mappedBy = "user",
@@ -229,7 +229,6 @@ public abstract class User implements TimeZoneAware {
             throw new EmailNotFoundException(newPublicEmail);
         }
     }
-
 
     public void changeNickname(String nickname) {
         this.nickname = nickname;

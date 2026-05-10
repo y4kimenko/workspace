@@ -2,9 +2,11 @@ package by.diplom.workspace.worker.service.user.impl;
 
 import by.diplom.workspace.email.model.UserEmail;
 import by.diplom.workspace.position.model.DepartmentPosition;
+import by.diplom.workspace.worker.dto.profile.request.UpdateBioRequestDto;
 import by.diplom.workspace.worker.dto.profile.request.UpdateNicknameRequestDto;
 import by.diplom.workspace.worker.dto.profile.request.UpdatePasswordRequestDto;
 import by.diplom.workspace.worker.dto.profile.request.UpdatePronounRequestDto;
+import by.diplom.workspace.worker.dto.profile.response.UserBioResponseDto;
 import by.diplom.workspace.worker.dto.profile.response.UserNicknameResponseDto;
 import by.diplom.workspace.worker.dto.profile.response.UserPronounResponseDto;
 import by.diplom.workspace.worker.dto.profile.response.UserPublicProfileResponseDto;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
 import java.util.UUID;
 
 @Service
@@ -27,6 +30,7 @@ import java.util.UUID;
 public class UserProfileServiceImpl implements UserProfileService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
 
     @Override
     @Transactional
@@ -53,21 +57,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public UserPronounResponseDto updatePronoun(UUID userId, UpdatePronounRequestDto request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
-        user.changePronoun(request.pronoun());
-
-        return new UserPronounResponseDto(
-                user.getId(),
-                user.getPronoun(),
-                user.getPronoun().getDisplayName()
-        );
-    }
-
-    @Override
-    @Transactional
     public void updatePassword(UUID userId, UpdatePasswordRequestDto request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
@@ -88,6 +77,36 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         user.changePassword(passwordEncoder.encode(request.newPassword()));
+    }
+
+    @Override
+    @Transactional
+    public UserPronounResponseDto updatePronoun(UUID userId, UpdatePronounRequestDto request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        user.changePronoun(request.pronoun());
+
+        return new UserPronounResponseDto(
+                user.getId(),
+                user.getPronoun(),
+                user.getPronoun().getDisplayName()
+        );
+    }
+
+    @Override
+    @Transactional
+    public UserBioResponseDto updateBio(UUID userId, UpdateBioRequestDto request) {
+        if (!userRepository.existsById(userId))
+                throw new UserNotFoundException(userId);
+
+        String normalizedBio = (request.bio() != null && !request.bio().isBlank())
+                ? request.bio().strip()
+                : null;
+
+        userRepository.updateBio(userId, normalizedBio);
+
+        return new UserBioResponseDto(userId, normalizedBio);
     }
 
     @Override

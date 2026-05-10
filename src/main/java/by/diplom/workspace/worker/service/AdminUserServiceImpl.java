@@ -1,6 +1,5 @@
 package by.diplom.workspace.worker.service;
 
-
 import by.diplom.workspace.worker.component.NicknameGenerator;
 import by.diplom.workspace.worker.component.PasswordGenerator;
 import by.diplom.workspace.worker.dto.user.request.CreateUserRequestDto;

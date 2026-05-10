@@ -1,4 +1,4 @@
-package by.diplom.workspace.worker.model.user.settings;
+package by.diplom.workspace.notification.model;
 
 import by.diplom.workspace.worker.model.user.User;
 import jakarta.persistence.Column;

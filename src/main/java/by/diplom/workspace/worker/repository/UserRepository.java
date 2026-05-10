@@ -25,10 +25,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             """)
     Optional<User> findByVerifiedEmail(@Param("email") String email);
 
-    boolean existsByDepartmentPositionId(Long departmentPositionId);
-
     // Обнуляем departmentPosition у всех пользователей с данной связкой
     @Modifying
     @Query("UPDATE User u SET u.departmentPosition = null WHERE u.departmentPosition.id = :dpId")
     void clearDepartmentPositionByDepartmentPositionId(@Param("dpId") Long dpId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE User u SET u.bio = :bio WHERE u.id = :id")
+    void updateBio(@Param("id") UUID id, @Param("bio") String bio);
 }

@@ -47,4 +47,5 @@ public class EmailSender {
                 """.formatted(fullName, nickname, rawPassword));
         mailSender.send(message);
     }
+
 }

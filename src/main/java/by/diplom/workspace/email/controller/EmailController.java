@@ -2,7 +2,6 @@ package by.diplom.workspace.email.controller;
 
 import by.diplom.workspace.email.dto.request.AddEmailRequestDto;
 import by.diplom.workspace.email.dto.request.UpdatePrimaryEmailRequestDto;
-import by.diplom.workspace.email.dto.request.UpdatePublicEmailRequestDto;
 import by.diplom.workspace.email.dto.request.VerifyEmailRequestDto;
 import by.diplom.workspace.email.dto.response.UserEmailResponseDto;
 import by.diplom.workspace.email.service.EmailVerificationService;
@@ -92,18 +91,6 @@ public class EmailController {
         );
     }
 
-    @PatchMapping("/public")
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updatePublicEmail(
-            @AuthenticationPrincipal AppUserDetails currentUser,
-            @Valid @RequestBody UpdatePublicEmailRequestDto request
-    ) {
-        emailVerificationService.updatePublicEmail(
-                currentUser.getId(),
-                request.email()
-        );
-    }
 
     @DeleteMapping("/{email}")
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")

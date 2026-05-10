@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/positions")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+@PreAuthorize("hasRole('ADMIN')")
 public class PositionController {
     private final PositionService positionService;
 

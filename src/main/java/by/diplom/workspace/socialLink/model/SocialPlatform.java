@@ -1,4 +1,4 @@
-package by.diplom.workspace.worker.model.user.profile;
+package by.diplom.workspace.socialLink.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

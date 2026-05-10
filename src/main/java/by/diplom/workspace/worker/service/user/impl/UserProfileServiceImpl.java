@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -114,14 +113,6 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .findFirst()
                 .orElse(null);
 
-        // Социальные сети
-        List<UserPublicProfileResponseDto.SocialLinkInfo> socialLinks = user.getSocialLinks().stream()
-                .map(link -> new UserPublicProfileResponseDto.SocialLinkInfo(
-                        link.getId(),
-                        link.getPlatform().getCode(),
-                        link.getPlatform().getName(),
-                        link.getUrl()))
-                .toList();
 
         return new UserPublicProfileResponseDto(
                 user.getFullName(),
@@ -130,8 +121,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 user.getBio(),
                 user.getPronoun().getDisplayName(),
                 dpInfo,
-                publicEmail,
-                socialLinks
+                publicEmail
         );
     }
 }

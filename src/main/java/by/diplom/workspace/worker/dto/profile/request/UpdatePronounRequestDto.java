@@ -1,6 +1,6 @@
 package by.diplom.workspace.worker.dto.profile.request;
 
-import by.diplom.workspace.worker.model.user.profile.Pronoun;
+import by.diplom.workspace.socialLink.model.Pronoun;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdatePronounRequestDto(

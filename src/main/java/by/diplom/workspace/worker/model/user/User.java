@@ -4,10 +4,8 @@ import by.diplom.workspace.email.exception.CannotDeleteLastEmailException;
 import by.diplom.workspace.email.exception.CannotDeletePrimaryEmailException;
 import by.diplom.workspace.email.exception.EmailNotFoundException;
 import by.diplom.workspace.favorite.model.FavoritePlace;
-import by.diplom.workspace.worker.model.user.profile.Pronoun;
-import by.diplom.workspace.worker.model.user.profile.SocialPlatform;
+import by.diplom.workspace.socialLink.model.Pronoun;
 import by.diplom.workspace.email.model.UserEmail;
-import by.diplom.workspace.worker.model.user.profile.UserSocialLink;
 import by.diplom.workspace.position.model.DepartmentPosition;
 import by.diplom.workspace.worker.model.user.settings.UserAppearanceSettings;
 import by.diplom.workspace.worker.model.user.settings.UserNotificationSettings;
@@ -94,13 +92,6 @@ public abstract class User implements TimeZoneAware {
             orphanRemoval = true
     )
     private List<UserEmail> emails = new ArrayList<>(); // +
-
-    @OneToMany(
-            mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<UserSocialLink> socialLinks = new ArrayList<>();
 
     @OneToOne(
             mappedBy = "user",
@@ -239,10 +230,6 @@ public abstract class User implements TimeZoneAware {
         }
     }
 
-    public void addSocialLink(SocialPlatform platform, String url) {
-        UserSocialLink socialLink = new UserSocialLink(this, platform, url);
-        socialLinks.add(socialLink);
-    }
 
     public void changeNickname(String nickname) {
         this.nickname = nickname;

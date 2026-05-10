@@ -7,7 +7,7 @@ import by.diplom.workspace.worker.dto.profile.request.UpdatePronounRequestDto;
 import by.diplom.workspace.worker.dto.profile.response.UserNicknameResponseDto;
 import by.diplom.workspace.worker.dto.profile.response.UserPublicProfileResponseDto;
 import by.diplom.workspace.worker.dto.profile.response.UserPronounResponseDto;
-import by.diplom.workspace.worker.model.user.profile.Pronoun;
+import by.diplom.workspace.socialLink.model.Pronoun;
 import by.diplom.workspace.worker.service.user.inter.UserProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

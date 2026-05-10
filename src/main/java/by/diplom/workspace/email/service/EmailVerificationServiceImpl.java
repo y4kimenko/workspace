@@ -1,10 +1,11 @@
 package by.diplom.workspace.email.service;
 
 import by.diplom.workspace.email.component.EmailSender;
-import by.diplom.workspace.email.dto.response.UserEmailResponse;
+import by.diplom.workspace.email.dto.response.UserEmailResponseDto;
 import by.diplom.workspace.email.exception.EmailAlreadyExistsException;
 import by.diplom.workspace.email.exception.EmailNotFoundException;
 import by.diplom.workspace.email.exception.InvalidVerificationCodeException;
+import by.diplom.workspace.email.mapper.UserEmailMapper;
 import by.diplom.workspace.email.model.EmailVerificationToken;
 import by.diplom.workspace.email.repository.EmailVerificationTokenRepository;
 import by.diplom.workspace.worker.exception.UserNotFoundException;
@@ -113,16 +114,10 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserEmailResponse> getUserEmails(UUID userId) {
+    public List<UserEmailResponseDto> getUserEmails(UUID userId) {
         return userEmailRepository.findAllByUserId(userId)
                 .stream()
-                .map(e -> new UserEmailResponse(
-                        e.getId(),
-                        e.getEmail(),
-                        e.isVerified(),
-                        e.isPrimaryEmail(),
-                        e.isPublicEmail()
-                ))
+                .map(UserEmailMapper::toResponseDto)
                 .toList();
     }
 

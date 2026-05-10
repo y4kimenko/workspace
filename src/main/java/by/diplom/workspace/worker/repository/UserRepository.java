@@ -2,6 +2,7 @@ package by.diplom.workspace.worker.repository;
 
 import by.diplom.workspace.worker.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -23,4 +24,11 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             AND e.verified = true
             """)
     Optional<User> findByVerifiedEmail(@Param("email") String email);
+
+    boolean existsByDepartmentPositionId(Long departmentPositionId);
+
+    // Обнуляем departmentPosition у всех пользователей с данной связкой
+    @Modifying
+    @Query("UPDATE User u SET u.departmentPosition = null WHERE u.departmentPosition.id = :dpId")
+    void clearDepartmentPositionByDepartmentPositionId(@Param("dpId") Long dpId);
 }

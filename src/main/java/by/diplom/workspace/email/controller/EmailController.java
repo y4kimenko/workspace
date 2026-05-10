@@ -1,10 +1,10 @@
 package by.diplom.workspace.email.controller;
 
-import by.diplom.workspace.email.dto.request.AddEmailRequest;
-import by.diplom.workspace.email.dto.request.UpdatePrimaryEmailRequest;
-import by.diplom.workspace.email.dto.request.UpdatePublicEmailRequest;
-import by.diplom.workspace.email.dto.request.VerifyEmailRequest;
-import by.diplom.workspace.email.dto.response.UserEmailResponse;
+import by.diplom.workspace.email.dto.request.AddEmailRequestDto;
+import by.diplom.workspace.email.dto.request.UpdatePrimaryEmailRequestDto;
+import by.diplom.workspace.email.dto.request.UpdatePublicEmailRequestDto;
+import by.diplom.workspace.email.dto.request.VerifyEmailRequestDto;
+import by.diplom.workspace.email.dto.response.UserEmailResponseDto;
 import by.diplom.workspace.email.service.EmailVerificationService;
 import by.diplom.workspace.security.AppUserDetails;
 import jakarta.validation.Valid;
@@ -40,7 +40,7 @@ public class EmailController {
     @ResponseStatus(HttpStatus.ACCEPTED) // 202 — письмо отправляется
     public void addEmail(
             @AuthenticationPrincipal AppUserDetails currentUser,
-            @Valid @RequestBody AddEmailRequest request
+            @Valid @RequestBody AddEmailRequestDto request
     ) {
         emailVerificationService.addEmailAndSendCode(currentUser.getId(), request.email());
     }
@@ -52,7 +52,7 @@ public class EmailController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void verifyEmail(
             @AuthenticationPrincipal AppUserDetails currentUser,
-            @Valid @RequestBody VerifyEmailRequest request
+            @Valid @RequestBody VerifyEmailRequestDto request
     ) {
         emailVerificationService.verifyEmail(
                 currentUser.getId(),
@@ -67,7 +67,7 @@ public class EmailController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void resendCode(
             @AuthenticationPrincipal AppUserDetails currentUser,
-            @Valid @RequestBody AddEmailRequest request
+            @Valid @RequestBody AddEmailRequestDto request
     ) {
         emailVerificationService.resendCode(currentUser.getId(), request.email());
     }
@@ -75,7 +75,7 @@ public class EmailController {
     @GetMapping
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.OK)
-    public List<UserEmailResponse> getMyEmails(
+    public List<UserEmailResponseDto> getMyEmails(
             @AuthenticationPrincipal AppUserDetails currentUser
     ) {
         return emailVerificationService.getUserEmails(currentUser.getId());
@@ -86,7 +86,7 @@ public class EmailController {
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204
     public void updatePrimaryEmail(
             @AuthenticationPrincipal AppUserDetails currentUser,
-            @Valid @RequestBody UpdatePrimaryEmailRequest request
+            @Valid @RequestBody UpdatePrimaryEmailRequestDto request
     ) {
         emailVerificationService.updatePrimaryEmail(
                 currentUser.getId(),
@@ -99,7 +99,7 @@ public class EmailController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updatePublicEmail(
             @AuthenticationPrincipal AppUserDetails currentUser,
-            @Valid @RequestBody UpdatePublicEmailRequest request
+            @Valid @RequestBody UpdatePublicEmailRequestDto request
     ) {
         emailVerificationService.updatePublicEmail(
                 currentUser.getId(),

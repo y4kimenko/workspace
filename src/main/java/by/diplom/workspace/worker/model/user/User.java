@@ -84,8 +84,8 @@ public abstract class User implements TimeZoneAware {
     @Column(name = "timezone", nullable = false, length = 64)
     private String timeZone = TimeZoneSupport.DEFAULT_TIME_ZONE;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "department_position_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_position_id")
     private DepartmentPosition departmentPosition;
 
     @OneToMany(

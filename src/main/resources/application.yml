@@ -2,6 +2,9 @@ spring:
   application:
     name: workspace
 
+config:
+  import: optional:file:.env[.properties]
+
   datasource:
     url: jdbc:postgresql://localhost:5438/appdb
     username: admin

@@ -35,6 +35,8 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEmail {
 
+    public static final int MAX_EMAIL_COUNT = 5;
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

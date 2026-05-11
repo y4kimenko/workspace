@@ -3,6 +3,7 @@ package by.diplom.workspace.email.service;
 
 import by.diplom.workspace.email.dto.response.UserEmailResponseDto;
 import by.diplom.workspace.email.exception.EmailAlreadyExistsException;
+import by.diplom.workspace.email.exception.EmailLimitExceededException;
 import by.diplom.workspace.email.exception.EmailNotFoundException;
 import by.diplom.workspace.email.exception.InvalidVerificationCodeException;
 import by.diplom.workspace.email.mapper.UserEmailMapper;
@@ -49,6 +50,9 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         // 2. Находим пользователя
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
+
+        if (user.getEmails().size() == UserEmail.MAX_EMAIL_COUNT)
+            throw new EmailLimitExceededException(UserEmail.MAX_EMAIL_COUNT);
 
         // 3. Добавляем email через метод сущности (verified = false, primaryEmail = false)
         user.addEmail(email, false, false);

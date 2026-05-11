@@ -44,7 +44,8 @@ public class UserAvatarController {
             @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal AppUserDetails currentUser
     ) {
-        return userAvatarService.uploadAvatar(userId, file);
+
+        return userAvatarService.uploadAvatar(userId, currentUser.getId(), file);
     }
 
     /**

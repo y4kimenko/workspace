@@ -44,7 +44,10 @@ public class UserAvatarServiceImpl implements UserAvatarService {
 
     @Override
     @Transactional
-    public UserAvatarResponse uploadAvatar(UUID userId, MultipartFile file) {
+    public UserAvatarResponse uploadAvatar(UUID reqUserId,UUID userId, MultipartFile file) {
+        if (!reqUserId.equals(userId))
+            throw new AvatarException("Данный пользователь не имеет таких прав");
+
         User user = findUserOrThrow(userId);
 
         validateFile(file);

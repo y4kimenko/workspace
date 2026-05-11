@@ -1,7 +1,7 @@
 package by.diplom.workspace.security;
 
-import by.diplom.workspace.worker.model.GroupManager;
-import by.diplom.workspace.worker.model.user.User;
+import by.diplom.workspace.worker.worker.model.GroupManager;
+import by.diplom.workspace.worker.worker.model.user.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

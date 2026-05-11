@@ -2,7 +2,7 @@ package by.diplom.workspace.booking.model.workplace;
 
 import by.diplom.workspace.booking.model.Booking;
 import by.diplom.workspace.place.model.Workplace;
-import by.diplom.workspace.worker.model.user.User;
+import by.diplom.workspace.worker.worker.model.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

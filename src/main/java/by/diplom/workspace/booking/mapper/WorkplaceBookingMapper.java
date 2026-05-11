@@ -2,7 +2,7 @@ package by.diplom.workspace.booking.mapper;
 
 import by.diplom.workspace.booking.dto.WorkplaceBookingResponseDto;
 import by.diplom.workspace.booking.model.workplace.WorkplaceBooking;
-import by.diplom.workspace.worker.model.user.User;
+import by.diplom.workspace.worker.worker.model.user.User;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;

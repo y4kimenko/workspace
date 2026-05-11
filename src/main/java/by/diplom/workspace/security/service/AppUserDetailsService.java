@@ -3,8 +3,8 @@ package by.diplom.workspace.security.service;
 
 import by.diplom.workspace.security.AppUserDetails;
 import by.diplom.workspace.security.Role;
-import by.diplom.workspace.worker.model.user.User;
-import by.diplom.workspace.worker.repository.UserRepository;
+import by.diplom.workspace.worker.worker.model.user.User;
+import by.diplom.workspace.worker.worker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

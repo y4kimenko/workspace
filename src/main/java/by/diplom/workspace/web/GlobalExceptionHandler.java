@@ -1,10 +1,10 @@
 package by.diplom.workspace.web;
 
-import by.diplom.workspace.email.exception.CannotDeleteLastEmailException;
-import by.diplom.workspace.email.exception.CannotDeletePrimaryEmailException;
-import by.diplom.workspace.email.exception.EmailAlreadyExistsException;
-import by.diplom.workspace.email.exception.InvalidVerificationCodeException;
-import by.diplom.workspace.worker.exception.password.PasswordMismatchException;
+import by.diplom.workspace.worker.email.exception.CannotDeleteLastEmailException;
+import by.diplom.workspace.worker.email.exception.CannotDeletePrimaryEmailException;
+import by.diplom.workspace.worker.email.exception.EmailAlreadyExistsException;
+import by.diplom.workspace.worker.email.exception.InvalidVerificationCodeException;
+import by.diplom.workspace.worker.worker.exception.password.PasswordMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;

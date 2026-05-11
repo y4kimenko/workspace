@@ -32,7 +32,6 @@ public abstract class Booking {
     @Column(name = "end_at", nullable = false)
     private Instant endAt;
 
-
     protected Booking(
             LocalDateTime startAt,
             LocalDateTime endAt,
@@ -51,13 +50,6 @@ public abstract class Booking {
 
     public Duration getDuration() {
         return Duration.between(startAt, endAt);
-    }
-
-    public boolean overlapsWith(Instant otherStartAt, Instant otherEndAt) {
-        validateInstantPeriod(otherStartAt, otherEndAt);
-
-        return this.startAt.isBefore(otherEndAt)
-                && this.endAt.isAfter(otherStartAt);
     }
 
     protected void changePeriod(
@@ -86,6 +78,20 @@ public abstract class Booking {
         if (!endAt.isAfter(startAt)) {
             throw new IllegalArgumentException("Дата окончания должна быть позже даты начала");
         }
+
+        validateTimeSlot(startAt);
+        validateTimeSlot(endAt);
+
+    }
+
+    private static void validateTimeSlot(LocalDateTime dateTime) {
+        if (dateTime.getMinute() % 15 != 0
+                || dateTime.getSecond() != 0
+                || dateTime.getNano() != 0) {
+            throw new IllegalArgumentException(
+                    "Время бронирования должно быть кратно 15 минутам (например, 12:00, 12:15, 12:30, 12:45)"
+            );
+        }
     }
 
     private static void validateInstantPeriod(
@@ -99,6 +105,9 @@ public abstract class Booking {
         if (!endAt.isAfter(startAt)) {
             throw new IllegalArgumentException("Дата окончания должна быть позже даты начала");
         }
+
+        validateTimeSlot(startAt.atZone(ZoneId.systemDefault()).toLocalDateTime());
+        validateTimeSlot(endAt.atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
 
 }

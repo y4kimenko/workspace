@@ -1,15 +1,16 @@
 package by.diplom.workspace.worker.model.user;
 
+import by.diplom.workspace.booking.model.workplace.WorkplaceBooking;
 import by.diplom.workspace.email.exception.CannotDeleteLastEmailException;
 import by.diplom.workspace.email.exception.CannotDeletePrimaryEmailException;
 import by.diplom.workspace.email.exception.EmailNotFoundException;
 import by.diplom.workspace.email.exception.PrimaryEmailNotFoundException;
+import by.diplom.workspace.email.model.UserEmail;
 import by.diplom.workspace.favorite.model.FavoritePlace;
 import by.diplom.workspace.notification.component.EmailSender;
-import by.diplom.workspace.email.model.UserEmail;
+import by.diplom.workspace.notification.model.UserNotificationSettings;
 import by.diplom.workspace.position.model.DepartmentPosition;
 import by.diplom.workspace.worker.model.user.settings.UserAppearanceSettings;
-import by.diplom.workspace.notification.model.UserNotificationSettings;
 import by.diplom.workspace.worker.model.user.settings.UserPrivacySettings;
 import by.diplom.workspace.worker.model.user.time.TimeZoneAware;
 import by.diplom.workspace.worker.model.user.time.TimeZoneSupport;
@@ -37,6 +38,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -92,7 +94,7 @@ public abstract class User implements TimeZoneAware {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<UserEmail> emails = new ArrayList<>(); // +
+    private final List<UserEmail> emails = new ArrayList<>(); // +
 
     @OneToOne(
             mappedBy = "user",
@@ -123,7 +125,14 @@ public abstract class User implements TimeZoneAware {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<FavoritePlace> favoritePlaces = new HashSet<>();
+    private final Set<FavoritePlace> favoritePlaces = new HashSet<>();
+
+    @OneToMany(
+            mappedBy = "createdBy",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private final List<WorkplaceBooking> bookingsWorkplace = new ArrayList<>();
 
     protected User(
             String fullName,
@@ -263,5 +272,9 @@ public abstract class User implements TimeZoneAware {
                 .findFirst().orElseThrow(
                         () -> new PrimaryEmailNotFoundException(getId())
                 );
+    }
+
+    public ZoneId getZoneId() {
+        return ZoneId.of(this.timeZone);
     }
 }

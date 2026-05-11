@@ -4,4 +4,5 @@ public record UserPartPublicProfileResponseDto(
         String bio,
         PronounResponseDto pronoun,
         String publicEmail
-) {}
+) {
+}

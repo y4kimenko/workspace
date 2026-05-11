@@ -19,4 +19,5 @@ public record CreateUserRequestDto(
 
         @NotNull
         UserTypeRequest userType
-) {}
+) {
+}

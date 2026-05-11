@@ -4,4 +4,5 @@ import jakarta.validation.constraints.NotBlank;
 
 public record CreatePositionRequestDto(
         @NotBlank String name
-) {}
+) {
+}

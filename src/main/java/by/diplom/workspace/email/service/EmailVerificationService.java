@@ -34,6 +34,7 @@ public interface EmailVerificationService {
      * Возвращает список всех верифицированных email-адресов пользователя.
      */
     List<UserEmailResponseDto> getUserVerifiedEmails(UUID userId);
+
     /**
      * Меняет основную почту пользователя.
      * Отправляет уведомление на старую основную почту.

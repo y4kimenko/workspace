@@ -4,4 +4,5 @@ public record DepartmentPositionResponseDto(
         Long id,
         DepartmentResponseDto department,
         PositionResponseDto position
-) {}
+) {
+}

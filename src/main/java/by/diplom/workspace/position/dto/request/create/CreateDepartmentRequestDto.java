@@ -4,4 +4,5 @@ import jakarta.validation.constraints.NotBlank;
 
 public record CreateDepartmentRequestDto(
         @NotBlank String name
-) {}
+) {
+}

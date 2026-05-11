@@ -5,6 +5,7 @@ import by.diplom.workspace.email.repository.UserEmailRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,8 @@ import java.util.concurrent.ScheduledFuture;
 @RequiredArgsConstructor
 public class EmailVerificationExpiryService {
 
-    private static final Duration EXPIRY_DURATION = Duration.ofMinutes(15);
+    @Value("${app.email-verification.expiry-duration}")
+    private Duration EXPIRY_DURATION;
 
     private final TaskScheduler taskScheduler;
     private final UserEmailRepository userEmailRepository;

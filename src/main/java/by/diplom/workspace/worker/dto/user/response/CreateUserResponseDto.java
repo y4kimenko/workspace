@@ -5,4 +5,5 @@ import java.util.UUID;
 public record CreateUserResponseDto(
         UUID id,
         String nickname
-) { }
+) {
+}

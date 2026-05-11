@@ -1,6 +1,5 @@
 package by.diplom.workspace.position.service.impl;
 
-import by.diplom.workspace.position.service.PositionService;
 import by.diplom.workspace.position.dto.request.create.CreatePositionRequestDto;
 import by.diplom.workspace.position.dto.request.update.UpdatePositionRequestDto;
 import by.diplom.workspace.position.dto.response.PositionResponseDto;
@@ -8,9 +7,10 @@ import by.diplom.workspace.position.exception.PositionAlreadyExistsException;
 import by.diplom.workspace.position.exception.PositionNotFoundException;
 import by.diplom.workspace.position.mapper.PositionMapper;
 import by.diplom.workspace.position.model.Position;
-import by.diplom.workspace.worker.repository.UserRepository;
 import by.diplom.workspace.position.repository.DepartmentPositionRepository;
 import by.diplom.workspace.position.repository.PositionRepository;
+import by.diplom.workspace.position.service.PositionService;
+import by.diplom.workspace.worker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,6 @@ import java.util.List;
 public class PositionServiceImpl implements PositionService {
     private final PositionRepository positionRepository;
     private final DepartmentPositionRepository departmentPositionRepository;
-    private final UserRepository userRepository;
 
     @Transactional
     public PositionResponseDto createPosition(CreatePositionRequestDto request) {

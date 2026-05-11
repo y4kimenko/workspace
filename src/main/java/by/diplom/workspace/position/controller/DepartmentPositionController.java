@@ -1,9 +1,9 @@
 package by.diplom.workspace.position.controller;
 
 import by.diplom.workspace.position.dto.request.create.CreateDepartmentPositionRequestDto;
+import by.diplom.workspace.position.dto.request.update.UpdateDepartmentPositionRequestDto;
 import by.diplom.workspace.position.dto.response.DepartmentPositionResponseDto;
 import by.diplom.workspace.position.service.DepartmentPositionService;
-import by.diplom.workspace.position.dto.request.update.UpdateDepartmentPositionRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

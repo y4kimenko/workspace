@@ -8,7 +8,7 @@ import java.util.UUID;
 public interface UserAvatarService {
     UserAvatarResponse uploadAvatar(UUID reqUserId, UUID userId, MultipartFile file);
 
-    void deleteAvatar(UUID userId);
+    void deleteAvatar(UUID reqUserId, UUID userId);
 
     UserAvatarResponse getAvatar(UUID userId);
 }

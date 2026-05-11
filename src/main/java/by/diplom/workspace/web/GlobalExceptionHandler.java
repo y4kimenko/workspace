@@ -7,8 +7,11 @@ import by.diplom.workspace.email.exception.InvalidVerificationCodeException;
 import by.diplom.workspace.worker.exception.password.PasswordMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.Instant;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -41,5 +44,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ProblemDetail handleRuntimeException(RuntimeException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    public static ResponseEntity<ApiError> buildResponse(
+            HttpStatus status,
+            String code,
+            String message
+    ) {
+        return ResponseEntity
+                .status(status)
+                .body(new ApiError(
+                        status.value(),
+                        code,
+                        message,
+                        Instant.now()
+                ));
     }
 }

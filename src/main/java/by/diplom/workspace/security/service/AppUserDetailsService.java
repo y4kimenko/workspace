@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -52,5 +53,11 @@ public class AppUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "User not found by nickname or email: " + usernameOrEmail
                 ));
+    }
+
+    public UserDetails loadUserById(UUID id) {
+        return userRepository.findById(id)
+                .map(AppUserDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found by id: " + id));
     }
 }

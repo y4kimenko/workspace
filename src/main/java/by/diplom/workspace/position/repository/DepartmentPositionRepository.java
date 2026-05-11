@@ -11,7 +11,9 @@ import java.util.List;
 
 public interface DepartmentPositionRepository extends JpaRepository<DepartmentPosition, Long> {
     List<DepartmentPosition> findAllByDepartmentId(Long departmentId);
+
     List<DepartmentPosition> findAllByPositionId(Long positionId);
+
     boolean existsByDepartmentIdAndPositionId(Long departmentId, Long positionId);
 
     boolean existsByDepartmentIdAndPositionIdAndIdNot(

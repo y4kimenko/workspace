@@ -1,10 +1,10 @@
 package by.diplom.workspace.notification.component;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Value;
 
 @Component
 @RequiredArgsConstructor
@@ -50,6 +50,7 @@ public class EmailSender {
     }
 
     // Безопасность аккаунта (системные, отправляются всегда) ───────────────
+
     /**
      * Уведомление об изменении пароля.
      * Отправляется на текущую основную почту после смены пароля.
@@ -112,8 +113,8 @@ public class EmailSender {
      * Отправляется на текущую основную почту.
      * Системное — не зависит от настроек уведомлений пользователя.
      *
-     * @param toPrimaryEmail  текущая основная почта
-     * @param fullName        полное имя пользователя
+     * @param toPrimaryEmail   текущая основная почта
+     * @param fullName         полное имя пользователя
      * @param newVerifiedEmail добавленный и подтверждённый email-адрес
      */
     public void sendNewVerifiedEmailAddedNotification(
@@ -163,4 +164,8 @@ public class EmailSender {
                 """.formatted(fullName, removedEmail));
         mailSender.send(message);
     }
+
+    /**/
+
+
 }

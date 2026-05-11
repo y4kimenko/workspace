@@ -14,7 +14,7 @@ public class AvatarStorageProperties {
     /**
      * Абсолютный путь к директории хранения аватаров.
      * Пример в application.yml:
-     *   app.avatar.storage-path: /var/app/uploads/avatars
+     * app.avatar.storage-path: /var/app/uploads/avatars
      */
     private String storagePath = "uploads/avatars";
 

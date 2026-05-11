@@ -7,13 +7,13 @@ import by.diplom.workspace.position.exception.DepartmentAlreadyExistsException;
 import by.diplom.workspace.position.exception.DepartmentNotFoundException;
 import by.diplom.workspace.position.mapper.DepartmentMapper;
 import by.diplom.workspace.position.model.Department;
-import by.diplom.workspace.worker.repository.UserRepository;
 import by.diplom.workspace.position.repository.DepartmentPositionRepository;
 import by.diplom.workspace.position.repository.DepartmentRepository;
 import by.diplom.workspace.position.service.DepartmentService;
-import org.springframework.transaction.annotation.Transactional;
+import by.diplom.workspace.worker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -75,8 +75,6 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .map(DepartmentMapper::toResponseDto)
                 .orElseThrow(() -> new DepartmentNotFoundException(id));
     }
-
-
 
 
 }

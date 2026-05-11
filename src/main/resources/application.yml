@@ -12,8 +12,8 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
+    open-in-view: false
     database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -45,7 +45,8 @@ spring:
 app:
   jwt:
     secret: ${APP_JWT_SECRET}   # минимум 32 байта в base64
-    expiration-ms: 86400000   # 24 часа
+    expiration-ms: 900000          # 15 минут
+    refresh-expiration-ms: 2592000000  # 30 дней
 
   admin:
     username: admin
@@ -55,10 +56,12 @@ app:
     storage-path: /var/app/uploads/avatars
     max-file-size-bytes: 5242880
 
+  email-verification:
+    expiry-duration: 15m
 
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
   api-docs:
-    path: /v3/api-docs
+    path: /api-docs
 

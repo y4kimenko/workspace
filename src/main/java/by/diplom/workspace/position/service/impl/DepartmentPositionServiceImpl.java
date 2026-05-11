@@ -10,15 +10,15 @@ import by.diplom.workspace.position.exception.PositionNotFoundException;
 import by.diplom.workspace.position.mapper.DepartmentPositionMapper;
 import by.diplom.workspace.position.model.Department;
 import by.diplom.workspace.position.model.DepartmentPosition;
-import by.diplom.workspace.worker.repository.UserRepository;
+import by.diplom.workspace.position.model.Position;
 import by.diplom.workspace.position.repository.DepartmentPositionRepository;
 import by.diplom.workspace.position.repository.DepartmentRepository;
 import by.diplom.workspace.position.repository.PositionRepository;
 import by.diplom.workspace.position.service.DepartmentPositionService;
+import by.diplom.workspace.worker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import by.diplom.workspace.position.model.Position;
 
 import java.util.List;
 

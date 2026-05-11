@@ -1,20 +1,20 @@
 package by.diplom.workspace.worker.service;
 
+import by.diplom.workspace.notification.component.EmailSender;
+import by.diplom.workspace.position.model.DepartmentPosition;
+import by.diplom.workspace.position.repository.DepartmentPositionRepository;
 import by.diplom.workspace.worker.component.NicknameGenerator;
 import by.diplom.workspace.worker.component.PasswordGenerator;
 import by.diplom.workspace.worker.dto.user.request.CreateUserRequestDto;
 import by.diplom.workspace.worker.dto.user.response.CreateUserResponseDto;
-import by.diplom.workspace.notification.component.EmailSender;
 import by.diplom.workspace.worker.model.Employee;
 import by.diplom.workspace.worker.model.GroupManager;
 import by.diplom.workspace.worker.model.user.User;
-import by.diplom.workspace.position.model.DepartmentPosition;
-import by.diplom.workspace.position.repository.DepartmentPositionRepository;
 import by.diplom.workspace.worker.repository.UserRepository;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -60,7 +60,6 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         return new CreateUserResponseDto(user.getId(), nickname);
     }
-
 
 
 }

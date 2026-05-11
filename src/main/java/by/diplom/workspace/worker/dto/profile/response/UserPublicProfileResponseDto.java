@@ -14,5 +14,6 @@ public record UserPublicProfileResponseDto(
     public record DepartmentPositionInfo(
             String positionName,
             String departmentName
-    ) {}
+    ) {
+    }
 }

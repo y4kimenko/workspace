@@ -28,7 +28,7 @@ public class UserAvatarServiceImpl implements UserAvatarService {
     // чтобы исключить подмену (например, evil.php → image/jpeg).
     private static final Map<String, String> ALLOWED_TYPES = Map.of(
             "image/jpeg", ".jpg",
-            "image/png",  ".png",
+            "image/png", ".png",
             "image/webp", ".webp"
     );
 
@@ -44,11 +44,11 @@ public class UserAvatarServiceImpl implements UserAvatarService {
 
     @Override
     @Transactional
-    public UserAvatarResponse uploadAvatar(UUID reqUserId,UUID userId, MultipartFile file) {
-        if (!reqUserId.equals(userId))
+    public UserAvatarResponse uploadAvatar(UUID userId, UUID userAvatarId, MultipartFile file) {
+        if (!userId.equals(userAvatarId))
             throw new AvatarException("Данный пользователь не имеет таких прав");
 
-        User user = findUserOrThrow(userId);
+        User user = findUserOrThrow(userAvatarId);
 
         validateFile(file);
 
@@ -74,8 +74,11 @@ public class UserAvatarServiceImpl implements UserAvatarService {
 
     @Override
     @Transactional
-    public void deleteAvatar(UUID userId) {
-        User user = findUserOrThrow(userId);
+    public void deleteAvatar(UUID userId, UUID userAvatarId) {
+        if (!userId.equals(userAvatarId))
+            throw new AvatarException("Данный пользователь не имеет таких прав");
+
+        User user = findUserOrThrow(userAvatarId);
 
         if (user.getAvatarPath() == null) {
             // Аватара нет — ничего не делаем, не бросаем ошибку

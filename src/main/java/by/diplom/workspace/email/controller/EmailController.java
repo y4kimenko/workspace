@@ -67,7 +67,7 @@ public class EmailController {
         emailVerificationService.resendCode(currentUser.getId(), request.email());
     }
 
-    @GetMapping
+    @GetMapping("/verify")
     @ResponseStatus(HttpStatus.OK)
     public List<UserEmailResponseDto> getVerifiedEmails(
             @AuthenticationPrincipal AppUserDetails currentUser

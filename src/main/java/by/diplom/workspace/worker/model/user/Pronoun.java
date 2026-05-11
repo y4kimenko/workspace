@@ -1,4 +1,4 @@
-package by.diplom.workspace.socialLink.model;
+package by.diplom.workspace.worker.model.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

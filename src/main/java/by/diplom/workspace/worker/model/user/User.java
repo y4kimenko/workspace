@@ -6,7 +6,6 @@ import by.diplom.workspace.email.exception.EmailNotFoundException;
 import by.diplom.workspace.email.exception.PrimaryEmailNotFoundException;
 import by.diplom.workspace.favorite.model.FavoritePlace;
 import by.diplom.workspace.notification.component.EmailSender;
-import by.diplom.workspace.socialLink.model.Pronoun;
 import by.diplom.workspace.email.model.UserEmail;
 import by.diplom.workspace.position.model.DepartmentPosition;
 import by.diplom.workspace.worker.model.user.settings.UserAppearanceSettings;

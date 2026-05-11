@@ -1,29 +1,28 @@
 package by.diplom.workspace.worker.service.user.impl;
 
+import by.diplom.workspace.email.exception.EmailNotFoundException;
 import by.diplom.workspace.email.model.UserEmail;
-import by.diplom.workspace.email.repository.UserEmailRepository;
 import by.diplom.workspace.notification.component.EmailSender;
 import by.diplom.workspace.position.model.DepartmentPosition;
-import by.diplom.workspace.worker.dto.profile.request.UpdateBioRequestDto;
 import by.diplom.workspace.worker.dto.profile.request.UpdateNicknameRequestDto;
 import by.diplom.workspace.worker.dto.profile.request.UpdatePasswordRequestDto;
-import by.diplom.workspace.worker.dto.profile.request.UpdatePronounRequestDto;
-import by.diplom.workspace.worker.dto.profile.response.UserBioResponseDto;
+import by.diplom.workspace.worker.dto.profile.request.UpdatePublicProfileRequestDto;
+import by.diplom.workspace.worker.dto.profile.response.PronounResponseDto;
 import by.diplom.workspace.worker.dto.profile.response.UserNicknameResponseDto;
-import by.diplom.workspace.worker.dto.profile.response.UserPronounResponseDto;
+import by.diplom.workspace.worker.dto.profile.response.UserPartPublicProfileResponseDto;
 import by.diplom.workspace.worker.dto.profile.response.UserPublicProfileResponseDto;
 import by.diplom.workspace.worker.exception.NicknameAlreadyExistsException;
 import by.diplom.workspace.worker.exception.UserNotFoundException;
 import by.diplom.workspace.worker.exception.password.InvalidPasswordException;
 import by.diplom.workspace.worker.exception.password.PasswordMismatchException;
+import by.diplom.workspace.worker.model.user.Pronoun;
 import by.diplom.workspace.worker.model.user.User;
 import by.diplom.workspace.worker.repository.UserRepository;
 import by.diplom.workspace.worker.service.user.inter.UserProfileService;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -84,32 +83,15 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     @Transactional
-    public UserPronounResponseDto updatePronoun(UUID userId, UpdatePronounRequestDto request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
-        user.changePronoun(request.pronoun());
-
-        return new UserPronounResponseDto(
-                user.getId(),
-                user.getPronoun(),
-                user.getPronoun().getDisplayName()
+    public UserPartPublicProfileResponseDto updatePublicProfile(UUID userId, UpdatePublicProfileRequestDto request) {
+        String bio = updateBio(userId, request.bio());
+        Pronoun pronoun = updatePronoun(userId, request.pronoun());
+        String newPublicEmail = updatePublicEmail(userId, request.email());
+        return new UserPartPublicProfileResponseDto(
+                bio,
+                new PronounResponseDto(pronoun.name(), pronoun.getDisplayName()),
+                newPublicEmail
         );
-    }
-
-    @Override
-    @Transactional
-    public UserBioResponseDto updateBio(UUID userId, UpdateBioRequestDto request) {
-        if (!userRepository.existsById(userId))
-                throw new UserNotFoundException(userId);
-
-        String normalizedBio = (request.bio() != null && !request.bio().isBlank())
-                ? request.bio().strip()
-                : null;
-
-        userRepository.updateBio(userId, normalizedBio);
-
-        return new UserBioResponseDto(userId, normalizedBio);
     }
 
     @Override
@@ -146,4 +128,43 @@ public class UserProfileServiceImpl implements UserProfileService {
                 publicEmail
         );
     }
+
+    // Вспомогательные методы
+
+    private Pronoun updatePronoun(UUID userId, Pronoun newPronoun) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        user.changePronoun(newPronoun);
+        return newPronoun;
+    }
+
+    private String updateBio(UUID userId, String newBio) {
+        if (!userRepository.existsById(userId))
+            throw new UserNotFoundException(userId);
+
+        String normalizedBio = (newBio != null && !newBio.isBlank())
+                ? newBio.strip()
+                : null;
+
+        userRepository.updateBio(userId, normalizedBio);
+        return normalizedBio;
+    }
+
+    private String updatePublicEmail(UUID userId, String newPublicEmail) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        boolean belongsToUserAndVerified = user.getEmails().stream()
+                .anyMatch(e -> e.getEmail().equals(newPublicEmail) && e.isVerified());
+
+        if (!belongsToUserAndVerified) {
+            throw new EmailNotFoundException(newPublicEmail);
+        }
+
+        user.changePublicEmail(newPublicEmail);
+        return newPublicEmail;
+    }
+
+
 }

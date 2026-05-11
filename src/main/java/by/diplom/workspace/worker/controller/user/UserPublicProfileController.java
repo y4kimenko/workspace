@@ -1,14 +1,11 @@
 package by.diplom.workspace.worker.controller.user;
 
-import by.diplom.workspace.email.dto.request.UpdatePublicEmailRequestDto;
-import by.diplom.workspace.email.service.EmailVerificationService;
+
 import by.diplom.workspace.security.AppUserDetails;
-import by.diplom.workspace.worker.dto.profile.request.UpdateBioRequestDto;
-import by.diplom.workspace.worker.dto.profile.request.UpdatePronounRequestDto;
-import by.diplom.workspace.worker.dto.profile.response.UserBioResponseDto;
+import by.diplom.workspace.worker.dto.profile.request.UpdatePublicProfileRequestDto;
+import by.diplom.workspace.worker.dto.profile.response.UserPartPublicProfileResponseDto;
 import by.diplom.workspace.worker.dto.profile.response.UserPublicProfileResponseDto;
-import by.diplom.workspace.worker.dto.profile.response.UserPronounResponseDto;
-import by.diplom.workspace.socialLink.model.Pronoun;
+import by.diplom.workspace.worker.model.user.Pronoun;
 import by.diplom.workspace.worker.service.user.inter.UserProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,15 +30,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserPublicProfileController {
     private final UserProfileService userProfileService;
-    private final EmailVerificationService emailVerificationService;
 
-    @PatchMapping("/me/pronoun")
+    @PatchMapping("/me/profile")
     @ResponseStatus(HttpStatus.OK)
-    public UserPronounResponseDto updateMyPronoun(
+    public UserPartPublicProfileResponseDto updateMyPublicProfile(
             @AuthenticationPrincipal AppUserDetails currentUser,
-            @Valid @RequestBody UpdatePronounRequestDto request
+            @Valid @RequestBody UpdatePublicProfileRequestDto request
     ) {
-        return userProfileService.updatePronoun(currentUser.getId(), request);
+        return userProfileService.updatePublicProfile(currentUser.getId(), request);
     }
 
     @GetMapping("/pronouns")
@@ -53,27 +49,6 @@ public class UserPublicProfileController {
                         "label", p.getDisplayName()  // "он/его"
                 ))
                 .toList();
-    }
-
-    @PatchMapping("/emails/public")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updatePublicEmail(
-            @AuthenticationPrincipal AppUserDetails currentUser,
-            @Valid @RequestBody UpdatePublicEmailRequestDto request
-    ) {
-        emailVerificationService.updatePublicEmail(
-                currentUser.getId(),
-                request.email()
-        );
-    }
-
-    @PatchMapping("/me/bio")
-    @ResponseStatus(HttpStatus.OK)
-    public UserBioResponseDto updateMyBio(
-            @AuthenticationPrincipal AppUserDetails currentUser,
-            @Valid @RequestBody UpdateBioRequestDto request
-    ) {
-        return userProfileService.updateBio(currentUser.getId(), request);
     }
 
     @GetMapping("/me/profile")

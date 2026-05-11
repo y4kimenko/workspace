@@ -2,7 +2,6 @@ package by.diplom.workspace.worker.dto.profile.response;
 
 
 public record UserPublicProfileResponseDto(
-
         String fullName,
         String nickname,
         String avatarPath,

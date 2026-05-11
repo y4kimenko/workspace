@@ -140,6 +140,18 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<UserEmailResponseDto> getUserVerifiedEmails(UUID userId) {
+        return userEmailRepository.findAllByUserId(userId)
+                .stream()
+                .filter(UserEmail::isVerified)
+                .map(UserEmailMapper::toResponseDto)
+                .toList();
+    }
+
+    // ── Список верифицированных почт пользователя ──────────────────────────────────────────────
+
+    @Override
+    @Transactional(readOnly = true)
     public List<UserEmailResponseDto> getUserEmails(UUID userId) {
         return userEmailRepository.findAllByUserId(userId)
                 .stream()
@@ -167,23 +179,6 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         user.changePrimaryEmail(newPrimaryEmail, emailSender);
     }
 
-    // ── Смена публичной почты ─────────────────────────────────────────────────
-
-    @Override
-    @Transactional
-    public void updatePublicEmail(UUID userId, String newPublicEmail) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
-        boolean belongsToUser = user.getEmails().stream()
-                .anyMatch(e -> e.getEmail().equals(newPublicEmail));
-
-        if (!belongsToUser) {
-            throw new EmailNotFoundException(newPublicEmail);
-        }
-
-        user.changePublicEmail(newPublicEmail);
-    }
 
     // ── Удаление почты ────────────────────────────────────────────────────────
 

@@ -69,7 +69,15 @@ public class EmailController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserEmailResponseDto> getMyEmails(
+    public List<UserEmailResponseDto> getVerifiedEmails(
+            @AuthenticationPrincipal AppUserDetails currentUser
+    ) {
+        return emailVerificationService.getUserVerifiedEmails(currentUser.getId());
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<UserEmailResponseDto> getEmails(
             @AuthenticationPrincipal AppUserDetails currentUser
     ) {
         return emailVerificationService.getUserEmails(currentUser.getId());

@@ -31,15 +31,15 @@ public interface EmailVerificationService {
     List<UserEmailResponseDto> getUserEmails(UUID userId);
 
     /**
+     * Возвращает список всех верифицированных email-адресов пользователя.
+     */
+    List<UserEmailResponseDto> getUserVerifiedEmails(UUID userId);
+    /**
      * Меняет основную почту пользователя.
      * Отправляет уведомление на старую основную почту.
      */
     void updatePrimaryEmail(UUID userId, String newPrimaryEmail);
 
-    /**
-     * Меняет публичную почту пользователя.
-     */
-    void updatePublicEmail(UUID userId, String newPublicEmail);
 
     /**
      * Удаляет email-адрес пользователя.

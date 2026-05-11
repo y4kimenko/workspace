@@ -1,4 +1,4 @@
-package by.diplom.workspace.theme.model;
+package by.diplom.workspace.worker.theme.model;
 
 import by.diplom.workspace.worker.worker.model.user.User;
 import jakarta.persistence.Column;

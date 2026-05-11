@@ -1,4 +1,4 @@
-package by.diplom.workspace.theme.model;
+package by.diplom.workspace.worker.theme.model;
 
 public enum ThemeMode {
     SYSTEM,

@@ -1,4 +1,4 @@
-package by.diplom.workspace.privacy.model;
+package by.diplom.workspace.worker.privacy.model;
 
 import by.diplom.workspace.worker.worker.model.user.User;
 import jakarta.persistence.Column;

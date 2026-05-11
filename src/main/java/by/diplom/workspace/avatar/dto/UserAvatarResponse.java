@@ -1,4 +1,4 @@
-package by.diplom.workspace.worker.dto.avatar;
+package by.diplom.workspace.avatar.dto;
 
 public record UserAvatarResponse(
         String avatarPath

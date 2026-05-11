@@ -1,4 +1,4 @@
-package by.diplom.workspace.worker.controller.user;
+package by.diplom.workspace.notification;
 
 
 import lombok.RequiredArgsConstructor;

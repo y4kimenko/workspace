@@ -1,6 +1,6 @@
-package by.diplom.workspace.worker.service.user.inter;
+package by.diplom.workspace.avatar.service;
 
-import by.diplom.workspace.worker.dto.avatar.UserAvatarResponse;
+import by.diplom.workspace.avatar.dto.UserAvatarResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
@@ -9,5 +9,7 @@ public interface UserAvatarService {
     UserAvatarResponse uploadAvatar(UUID userId, MultipartFile file);
 
     void deleteAvatar(UUID userId);
+
+    UserAvatarResponse getAvatar(UUID userId);
 }
 

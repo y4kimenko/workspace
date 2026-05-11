@@ -23,9 +23,8 @@ spring:
 
   servlet:
     multipart:
-      enabled: true
-      max-file-size: 4MB
-      max-request-size: 4MB
+      max-file-size: 5MB
+      max-request-size: 6MB
 
   mail:
     host: smtp.zoho.eu
@@ -37,6 +36,12 @@ spring:
       mail.smtp.starttls.enable: true
       mail.smtp.starttls.required: true
 
+  web:
+    resources:
+      static-locations:
+        - file:/var/app/
+        - classpath:/static/
+
 app:
   jwt:
     secret: ${APP_JWT_SECRET}   # минимум 32 байта в base64
@@ -45,6 +50,11 @@ app:
   admin:
     username: admin
     password-hash: ${APP_ADMIN_PASSWORD_HASH}
+
+  avatar:
+    storage-path: /var/app/uploads/avatars
+    max-file-size-bytes: 5242880
+
 
 springdoc:
   swagger-ui:

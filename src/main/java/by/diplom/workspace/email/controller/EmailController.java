@@ -26,6 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users/me/emails")
+@PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
 @RequiredArgsConstructor
 public class EmailController {
 
@@ -33,19 +34,17 @@ public class EmailController {
 
     // добавить email и получить код
     @PostMapping
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.ACCEPTED) // 202 — письмо отправляется
     public void addEmail(
             @AuthenticationPrincipal AppUserDetails currentUser,
             @Valid @RequestBody AddEmailRequestDto request
-    ) {
+    )  {
         emailVerificationService.addEmailAndSendCode(currentUser.getId(), request.email());
     }
 
 
     // подтвердить код
     @PostMapping("/verify")
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void verifyEmail(
             @AuthenticationPrincipal AppUserDetails currentUser,
@@ -60,7 +59,6 @@ public class EmailController {
 
     // повторная отправка кода
     @PostMapping("/resend")
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void resendCode(
             @AuthenticationPrincipal AppUserDetails currentUser,
@@ -70,7 +68,6 @@ public class EmailController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.OK)
     public List<UserEmailResponseDto> getMyEmails(
             @AuthenticationPrincipal AppUserDetails currentUser
@@ -79,7 +76,6 @@ public class EmailController {
     }
 
     @PatchMapping("/primary")
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204
     public void updatePrimaryEmail(
             @AuthenticationPrincipal AppUserDetails currentUser,
@@ -93,7 +89,6 @@ public class EmailController {
 
 
     @DeleteMapping("/{email}")
-    @PreAuthorize("hasAnyRole('EMPLOYEE', 'GROUP_MANAGER')")
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204
     public void deleteEmail(
             @AuthenticationPrincipal AppUserDetails currentUser,

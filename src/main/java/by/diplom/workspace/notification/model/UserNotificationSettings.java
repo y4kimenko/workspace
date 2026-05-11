@@ -12,12 +12,10 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.UUID;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "user_notification_settings")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,5 +35,9 @@ public class UserNotificationSettings {
 
     public UserNotificationSettings(User user) {
         this.user = user;
+    }
+
+    public void updateEmailNotifications(boolean enabled) {
+        this.emailNotificationsEnabled = enabled;
     }
 }

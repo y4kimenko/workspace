@@ -1,6 +1,8 @@
 package by.diplom.workspace.worker.service.user.impl;
 
 import by.diplom.workspace.email.model.UserEmail;
+import by.diplom.workspace.email.repository.UserEmailRepository;
+import by.diplom.workspace.notification.component.EmailSender;
 import by.diplom.workspace.position.model.DepartmentPosition;
 import by.diplom.workspace.worker.dto.profile.request.UpdateBioRequestDto;
 import by.diplom.workspace.worker.dto.profile.request.UpdateNicknameRequestDto;
@@ -30,7 +32,7 @@ import java.util.UUID;
 public class UserProfileServiceImpl implements UserProfileService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final EmailSender emailSender;
 
     @Override
     @Transactional
@@ -76,7 +78,8 @@ public class UserProfileServiceImpl implements UserProfileService {
             throw new IllegalArgumentException("Новый пароль не должен совпадать с текущим");
         }
 
-        user.changePassword(passwordEncoder.encode(request.newPassword()));
+        emailSender.sendPasswordChangedNotification(user.getPrimaryEmailAddress(), user.getFullName());
+        user.changePassword(passwordEncoder.encode(request.newPassword()), emailSender);
     }
 
     @Override

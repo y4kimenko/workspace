@@ -3,7 +3,9 @@ package by.diplom.workspace.worker.model.user;
 import by.diplom.workspace.email.exception.CannotDeleteLastEmailException;
 import by.diplom.workspace.email.exception.CannotDeletePrimaryEmailException;
 import by.diplom.workspace.email.exception.EmailNotFoundException;
+import by.diplom.workspace.email.exception.PrimaryEmailNotFoundException;
 import by.diplom.workspace.favorite.model.FavoritePlace;
+import by.diplom.workspace.notification.component.EmailSender;
 import by.diplom.workspace.socialLink.model.Pronoun;
 import by.diplom.workspace.email.model.UserEmail;
 import by.diplom.workspace.position.model.DepartmentPosition;
@@ -158,7 +160,7 @@ public abstract class User implements TimeZoneAware {
         emails.add(userEmail);
     }
 
-    public void removeEmail(String emailToDelete) {
+    public void removeEmail(String emailToDelete, EmailSender emailSender) {
         if (emails.size() <= 1) throw new CannotDeleteLastEmailException();
 
         UserEmail target = emails.stream()
@@ -169,6 +171,12 @@ public abstract class User implements TimeZoneAware {
         if (target.isPrimaryEmail()) throw new CannotDeletePrimaryEmailException();
 
         boolean wasPublic = target.isPublicEmail();
+
+        emailSender.sendVerifiedEmailRemovedNotification(
+                getPrimaryEmailAddress(),
+                this.fullName,
+                emailToDelete
+        );
         emails.remove(target);
 
         // Если удалили единственный публичный —
@@ -184,7 +192,7 @@ public abstract class User implements TimeZoneAware {
         }
     }
 
-    public void changePrimaryEmail(String newPrimaryEmail) {
+    public void changePrimaryEmail(String newPrimaryEmail, EmailSender emailSender) {
         boolean found = false;
 
         for (UserEmail userEmail : emails) {
@@ -195,6 +203,11 @@ public abstract class User implements TimeZoneAware {
                             "Нельзя сделать основным неподтверждённый email"
                     );
                 }
+                emailSender.sendPrimaryEmailChangedNotification(
+                        getPrimaryEmailAddress(),
+                        this.fullName,
+                        newPrimaryEmail
+                );
                 userEmail.makePrimary();
                 found = true;
             } else {
@@ -238,7 +251,18 @@ public abstract class User implements TimeZoneAware {
         this.pronoun = pronoun != null ? pronoun : Pronoun.NOT_SPECIFIED;
     }
 
-    public void changePassword(String newPasswordHash) {
+    public void changePassword(String newPasswordHash, EmailSender emailSender) {
+        emailSender.sendPasswordChangedNotification(getPrimaryEmailAddress(), this.fullName);
         this.passwordHash = newPasswordHash;
+    }
+
+
+    public String getPrimaryEmailAddress() {
+        return emails.stream()
+                .filter(UserEmail::isPrimaryEmail)
+                .map(UserEmail::getEmail)
+                .findFirst().orElseThrow(
+                        () -> new PrimaryEmailNotFoundException(getId())
+                );
     }
 }

@@ -4,7 +4,7 @@ import by.diplom.workspace.worker.component.NicknameGenerator;
 import by.diplom.workspace.worker.component.PasswordGenerator;
 import by.diplom.workspace.worker.dto.user.request.CreateUserRequestDto;
 import by.diplom.workspace.worker.dto.user.response.CreateUserResponseDto;
-import by.diplom.workspace.email.component.EmailSender;
+import by.diplom.workspace.notification.component.EmailSender;
 import by.diplom.workspace.worker.model.Employee;
 import by.diplom.workspace.worker.model.GroupManager;
 import by.diplom.workspace.worker.model.user.User;

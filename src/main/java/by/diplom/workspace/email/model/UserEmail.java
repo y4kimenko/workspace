@@ -90,5 +90,4 @@ public class UserEmail {
     public void revokePublic() {
         this.publicEmail = false;
     }
-
 }

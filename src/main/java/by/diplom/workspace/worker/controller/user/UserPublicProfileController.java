@@ -3,6 +3,7 @@ package by.diplom.workspace.worker.controller.user;
 
 import by.diplom.workspace.security.AppUserDetails;
 import by.diplom.workspace.worker.dto.profile.request.UpdatePublicProfileRequestDto;
+import by.diplom.workspace.worker.dto.profile.response.PronounResponseDto;
 import by.diplom.workspace.worker.dto.profile.response.UserPartPublicProfileResponseDto;
 import by.diplom.workspace.worker.dto.profile.response.UserPublicProfileResponseDto;
 import by.diplom.workspace.worker.model.user.Pronoun;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 
 @RestController
@@ -42,11 +42,11 @@ public class UserPublicProfileController {
 
     @GetMapping("/pronouns")
     @ResponseStatus(HttpStatus.OK)
-    public List<Map<String, String>> getAvailablePronouns() {
+    public List<PronounResponseDto> getAvailablePronouns() {
         return Arrays.stream(Pronoun.values())
-                .map(p -> Map.of(
-                        "value", p.name(),           // "HE_HIM"
-                        "label", p.getDisplayName()  // "он/его"
+                .map(p -> new PronounResponseDto(
+                        p.name(),           // "HE_HIM"
+                        p.getDisplayName()  // "он/его"
                 ))
                 .toList();
     }

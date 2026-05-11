@@ -6,7 +6,7 @@ public record UserPublicProfileResponseDto(
         String nickname,
         String avatarPath,
         String bio,
-        String pronoun,
+        PronounResponseDto pronoun,
 
         DepartmentPositionInfo departmentPosition,
         String publicEmail

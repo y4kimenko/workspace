@@ -123,7 +123,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 user.getNickname(),
                 user.getAvatarPath(),
                 user.getBio(),
-                user.getPronoun().getDisplayName(),
+                new PronounResponseDto(user.getPronoun().name(), user.getPronoun().getDisplayName()),
                 dpInfo,
                 publicEmail
         );

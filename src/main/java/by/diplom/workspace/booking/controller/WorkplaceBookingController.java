@@ -1,7 +1,7 @@
 package by.diplom.workspace.booking.controller;
 
-import by.diplom.workspace.booking.dto.WorkplaceBookingCreateDto;
 import by.diplom.workspace.booking.dto.FreeSlotDto;
+import by.diplom.workspace.booking.dto.WorkplaceBookingCreateDto;
 import by.diplom.workspace.booking.dto.WorkplaceBookingResponseDto;
 import by.diplom.workspace.booking.dto.WorkplaceBookingUpdateDto;
 import by.diplom.workspace.booking.service.WorkplaceBookingService;

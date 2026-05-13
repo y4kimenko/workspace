@@ -2,7 +2,6 @@ package by.diplom.workspace.booking.exception;
 
 import by.diplom.workspace.web.ApiError;
 import by.diplom.workspace.web.GlobalExceptionHandler;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;

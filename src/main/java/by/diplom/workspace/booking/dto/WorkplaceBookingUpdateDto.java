@@ -1,7 +1,8 @@
 package by.diplom.workspace.booking.dto;
 
-import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record WorkplaceBookingUpdateDto(
@@ -16,4 +17,5 @@ public record WorkplaceBookingUpdateDto(
 
         @NotNull(message = "Дата окончания бронирования обязательна")
         LocalDateTime endAt
-) { }
+) {
+}

@@ -62,7 +62,7 @@ public interface WorkplaceBookingRepository extends JpaRepository<WorkplaceBooki
     /**
      * Проверяет, есть ли пересекающиеся активные брони для рабочего места
      * в указанный диапазон времени (исключая саму бронь при обновлении).
-     *
+     * <p>
      * Перекрытие: existingStart < newEnd AND existingEnd > newStart
      */
     @Query("""

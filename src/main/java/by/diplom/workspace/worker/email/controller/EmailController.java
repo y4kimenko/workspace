@@ -1,11 +1,11 @@
 package by.diplom.workspace.worker.email.controller;
 
+import by.diplom.workspace.security.AppUserDetails;
 import by.diplom.workspace.worker.email.dto.request.AddEmailRequestDto;
 import by.diplom.workspace.worker.email.dto.request.UpdatePrimaryEmailRequestDto;
 import by.diplom.workspace.worker.email.dto.request.VerifyEmailRequestDto;
 import by.diplom.workspace.worker.email.dto.response.UserEmailResponseDto;
 import by.diplom.workspace.worker.email.service.EmailVerificationService;
-import by.diplom.workspace.security.AppUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

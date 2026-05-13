@@ -1,9 +1,9 @@
 package by.diplom.workspace.worker.avatar.controller;
 
 
+import by.diplom.workspace.security.AppUserDetails;
 import by.diplom.workspace.worker.avatar.dto.UserAvatarResponse;
 import by.diplom.workspace.worker.avatar.service.UserAvatarService;
-import by.diplom.workspace.security.AppUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;

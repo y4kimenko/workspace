@@ -10,7 +10,6 @@ import by.diplom.workspace.worker.favorite.model.FavoritePlace;
 import by.diplom.workspace.worker.notification.component.EmailSender;
 import by.diplom.workspace.worker.notification.model.UserNotificationSettings;
 import by.diplom.workspace.worker.position.model.DepartmentPosition;
-
 import by.diplom.workspace.worker.worker.model.user.time.TimeZoneAware;
 import by.diplom.workspace.worker.worker.model.user.time.TimeZoneSupport;
 import jakarta.persistence.CascadeType;

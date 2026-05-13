@@ -1,7 +1,7 @@
 package by.diplom.workspace.booking.service;
 
-import by.diplom.workspace.booking.dto.WorkplaceBookingCreateDto;
 import by.diplom.workspace.booking.dto.FreeSlotDto;
+import by.diplom.workspace.booking.dto.WorkplaceBookingCreateDto;
 import by.diplom.workspace.booking.dto.WorkplaceBookingResponseDto;
 import by.diplom.workspace.booking.dto.WorkplaceBookingUpdateDto;
 import by.diplom.workspace.booking.exception.BookingNotFoundException;
@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,19 +32,19 @@ public class WorkplaceBookingService {
 
 
     private final WorkplaceBookingRepository bookingRepository;
-    private final WorkplaceRepository        workplaceRepository;
-    private final UserRepository             userRepository;
+    private final WorkplaceRepository workplaceRepository;
+    private final UserRepository userRepository;
 
 
     // Создание брони
     @Transactional
     public WorkplaceBookingResponseDto create(WorkplaceBookingCreateDto dto, UUID userId) {
 
-        User      user      = getUser(userId);
+        User user = getUser(userId);
         Workplace workplace = getWorkplace(dto.workplaceId());
 
         LocalDateTime startAt = dto.startAt();
-        LocalDateTime endAt   = dto.endAt();
+        LocalDateTime endAt = dto.endAt();
 
         ZoneId zoneId = user.getZoneId();
         checkOverlap(workplace.getId(), startAt, endAt, zoneId, null);
@@ -92,7 +91,7 @@ public class WorkplaceBookingService {
         }
 
         LocalDateTime newStart = dto.startAt();
-        LocalDateTime newEnd   = dto.endAt();
+        LocalDateTime newEnd = dto.endAt();
 
         User user = booking.getCreatedBy();
         checkOverlap(booking.getWorkplace().getId(), newStart, newEnd, user.getZoneId(), booking.getId());
@@ -103,16 +102,17 @@ public class WorkplaceBookingService {
 
 
     // Свободные промежутки времени за день по брони
+
     /**
      * Возвращает свободные временны́е слоты (кратные 15 мин) на день,
      * который соответствует брони {@code bookingId}.
      * При вычислении слотов бронь {@code bookingId} считается свободной
      * (нужно при редактировании).
      *
-     * @param bookingId  идентификатор редактируемой брони (может быть null —
-     *                   тогда все занятые брони учитываются)
-     * @param workplaceId  идентификатор рабочего места
-     * @param targetDate день, для которого вычисляются слоты
+     * @param bookingId   идентификатор редактируемой брони (может быть null —
+     *                    тогда все занятые брони учитываются)
+     * @param workplaceId идентификатор рабочего места
+     * @param targetDate  день, для которого вычисляются слоты
      */
     @Transactional(readOnly = true)
     public List<FreeSlotDto> getFreeSlots(UUID bookingId, Long workplaceId, LocalDate targetDate) {
@@ -121,10 +121,10 @@ public class WorkplaceBookingService {
         ZoneId zoneId = resolveZoneId(bookingId);
 
         LocalDateTime dayStart = LocalDateTime.of(targetDate, WorkplaceBooking.DAY_START);
-        LocalDateTime dayEnd   = LocalDateTime.of(targetDate, WorkplaceBooking.DAY_END);
+        LocalDateTime dayEnd = LocalDateTime.of(targetDate, WorkplaceBooking.DAY_END);
 
         Instant dayStartInstant = dayStart.atZone(zoneId).toInstant();
-        Instant dayEndInstant   = dayEnd.atZone(zoneId).toInstant();
+        Instant dayEndInstant = dayEnd.atZone(zoneId).toInstant();
 
         List<WorkplaceBooking> busy = bookingRepository.findActiveForDay(
                 workplaceId,
@@ -153,7 +153,7 @@ public class WorkplaceBookingService {
             UUID excludeId
     ) {
         Instant startInstant = startAt.atZone(zoneId).toInstant();
-        Instant endInstant   = endAt.atZone(zoneId).toInstant();
+        Instant endInstant = endAt.atZone(zoneId).toInstant();
 
         boolean hasOverlap = bookingRepository.existsOverlap(
                 workplaceId, startInstant, endInstant, excludeId
@@ -178,7 +178,8 @@ public class WorkplaceBookingService {
         List<FreeSlotDto> result = new ArrayList<>();
 
         // Собираем список занятых интервалов в LocalDateTime для удобства
-        record Interval(LocalDateTime from, LocalDateTime to) {}
+        record Interval(LocalDateTime from, LocalDateTime to) {
+        }
 
         List<Interval> occupied = busy.stream()
                 .map(b -> new Interval(
@@ -188,7 +189,7 @@ public class WorkplaceBookingService {
                 // Обрезаем по границам дня
                 .map(i -> new Interval(
                         i.from().isBefore(dayStart) ? dayStart : i.from(),
-                        i.to().isAfter(dayEnd)      ? dayEnd   : i.to()
+                        i.to().isAfter(dayEnd) ? dayEnd : i.to()
                 ))
                 .toList();
 

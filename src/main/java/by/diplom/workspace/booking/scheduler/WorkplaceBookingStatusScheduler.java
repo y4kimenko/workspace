@@ -18,7 +18,7 @@ import java.util.List;
  * <pre>
  *   CONFIRMED ──(startAt наступил)──► IN_PROGRESS ──(endAt наступил)──► COMPLETED
  * </pre>
- *
+ * <p>
  * Частота проверок задаётся через {@code app.booking.scheduler.cron}
  * (по умолчанию каждую минуту).
  */
@@ -42,7 +42,7 @@ public class WorkplaceBookingStatusScheduler {
     public void updateStatuses() {
         Instant now = Instant.now();
 
-        int started   = startConfirmedBookings(now);
+        int started = startConfirmedBookings(now);
         int completed = completeFinishedBookings(now);
 
         if (started > 0 || completed > 0) {

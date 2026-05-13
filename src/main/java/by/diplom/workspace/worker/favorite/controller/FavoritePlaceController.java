@@ -1,9 +1,9 @@
 package by.diplom.workspace.worker.favorite.controller;
 
-import by.diplom.workspace.worker.favorite.service.FavoritePlaceService;
 import by.diplom.workspace.place.dto.MeetingRoomResponseDto;
 import by.diplom.workspace.place.dto.WorkplaceResponseDto;
 import by.diplom.workspace.security.AppUserDetails;
+import by.diplom.workspace.worker.favorite.service.FavoritePlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -6,7 +6,7 @@ spring:
     import: optional:file:.env[.properties]
 
   datasource:
-    url: jdbc:postgresql://localhost:5438/appdb
+    url: jdbc:postgresql://localhost:5438/appdb?sslmode=disable
     username: admin
     password: admin
     driver-class-name: org.postgresql.Driver
@@ -57,7 +57,11 @@ app:
     max-file-size-bytes: 5242880
 
   email-verification:
-    expiry-duration: 15m
+    expiry-duration: 5m
+
+  booking:
+    scheduler:
+      interval: 15m
 
 springdoc:
   swagger-ui:

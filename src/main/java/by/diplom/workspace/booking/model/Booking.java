@@ -1,6 +1,5 @@
 package by.diplom.workspace.booking.model;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,17 +9,20 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.UUID;
-
 
 @Getter
 @MappedSuperclass
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class Booking {
+
+    public static final LocalTime DAY_START = LocalTime.of(9, 0);
+    public static final LocalTime DAY_END = LocalTime.of(23, 0);
+    public static final int SLOT_MINUTES = 15;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -37,19 +39,7 @@ public abstract class Booking {
             LocalDateTime endAt,
             ZoneId zoneId
     ) {
-        validateDateTime(startAt, endAt);
-
-        if (zoneId == null) {
-            throw new IllegalArgumentException("Таймзона бронирования обязательна");
-        }
-
-        this.startAt = startAt.atZone(zoneId).toInstant();
-        this.endAt = endAt.atZone(zoneId).toInstant();
-    }
-
-
-    public Duration getDuration() {
-        return Duration.between(startAt, endAt);
+        changePeriod(startAt, endAt, zoneId);
     }
 
     protected void changePeriod(
@@ -57,14 +47,17 @@ public abstract class Booking {
             LocalDateTime newEndAt,
             ZoneId zoneId
     ) {
+        validateZoneId(zoneId);
         validateDateTime(newStartAt, newEndAt);
-
-        if (zoneId == null) {
-            throw new IllegalArgumentException("Таймзона бронирования обязательна");
-        }
 
         this.startAt = newStartAt.atZone(zoneId).toInstant();
         this.endAt = newEndAt.atZone(zoneId).toInstant();
+    }
+
+    private static void validateZoneId(ZoneId zoneId) {
+        if (zoneId == null) {
+            throw new IllegalArgumentException("Таймзона бронирования обязательна");
+        }
     }
 
     private static void validateDateTime(
@@ -75,39 +68,45 @@ public abstract class Booking {
             throw new IllegalArgumentException("Дата начала и дата окончания бронирования обязательны");
         }
 
+        validateTimeSlot(startAt);
+        validateTimeSlot(endAt);
+
         if (!endAt.isAfter(startAt)) {
             throw new IllegalArgumentException("Дата окончания должна быть позже даты начала");
         }
 
-        validateTimeSlot(startAt);
-        validateTimeSlot(endAt);
+        if (!startAt.toLocalDate().equals(endAt.toLocalDate())) {
+            throw new IllegalArgumentException(
+                    "Бронирование должно начинаться и заканчиваться в один день: " +
+                            startAt.toLocalDate() + " ≠ " + endAt.toLocalDate()
+            );
+        }
+
+        LocalTime startTime = startAt.toLocalTime();
+        LocalTime endTime = endAt.toLocalTime();
+
+        if (startTime.isBefore(DAY_START)) {
+            throw new IllegalArgumentException(
+                    "Начало бронирования не может быть раньше " + DAY_START
+            );
+        }
+
+        if (endTime.isAfter(DAY_END)) {
+            throw new IllegalArgumentException(
+                    "Конец бронирования не может быть позже " + DAY_END
+            );
+        }
+
 
     }
 
     private static void validateTimeSlot(LocalDateTime dateTime) {
-        if (dateTime.getMinute() % 15 != 0
+        if (dateTime.getMinute() % SLOT_MINUTES != 0
                 || dateTime.getSecond() != 0
                 || dateTime.getNano() != 0) {
             throw new IllegalArgumentException(
-                    "Время бронирования должно быть кратно 15 минутам (например, 12:00, 12:15, 12:30, 12:45)"
+                    "Время бронирования должно быть кратно 15 минутам, например 12:00, 12:15, 12:30, 12:45"
             );
         }
     }
-
-    private static void validateInstantPeriod(
-            Instant startAt,
-            Instant endAt
-    ) {
-        if (startAt == null || endAt == null) {
-            throw new IllegalArgumentException("Дата начала и дата окончания обязательны");
-        }
-
-        if (!endAt.isAfter(startAt)) {
-            throw new IllegalArgumentException("Дата окончания должна быть позже даты начала");
-        }
-
-        validateTimeSlot(startAt.atZone(ZoneId.systemDefault()).toLocalDateTime());
-        validateTimeSlot(endAt.atZone(ZoneId.systemDefault()).toLocalDateTime());
-    }
-
 }

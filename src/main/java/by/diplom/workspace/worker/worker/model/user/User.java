@@ -10,8 +10,7 @@ import by.diplom.workspace.worker.favorite.model.FavoritePlace;
 import by.diplom.workspace.worker.notification.component.EmailSender;
 import by.diplom.workspace.worker.notification.model.UserNotificationSettings;
 import by.diplom.workspace.worker.position.model.DepartmentPosition;
-import by.diplom.workspace.worker.theme.model.UserAppearanceSettings;
-import by.diplom.workspace.worker.privacy.model.UserPrivacySettings;
+
 import by.diplom.workspace.worker.worker.model.user.time.TimeZoneAware;
 import by.diplom.workspace.worker.worker.model.user.time.TimeZoneSupport;
 import jakarta.persistence.CascadeType;
@@ -102,23 +101,8 @@ public abstract class User implements TimeZoneAware {
             orphanRemoval = true,
             optional = false
     )
-    private UserAppearanceSettings appearanceSettings;
-
-    @OneToOne(
-            mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            optional = false
-    )
     private UserNotificationSettings notificationSettings;
 
-    @OneToOne(
-            mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            optional = false
-    )
-    private UserPrivacySettings privacySettings;
 
     @OneToMany(
             mappedBy = "user",
@@ -145,9 +129,7 @@ public abstract class User implements TimeZoneAware {
         this.passwordHash = passwordHash;
         this.departmentPosition = departmentPosition;
 
-        this.appearanceSettings = new UserAppearanceSettings(this);
         this.notificationSettings = new UserNotificationSettings(this);
-        this.privacySettings = new UserPrivacySettings(this);
     }
 
 

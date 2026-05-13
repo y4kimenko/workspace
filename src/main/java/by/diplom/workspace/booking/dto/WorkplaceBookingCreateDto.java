@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public record CreateWorkplaceBookingRequestDto(
+public record WorkplaceBookingCreateDto(
         @NotNull(message = "Укажите рабочее место")
         Long workplaceId,
 

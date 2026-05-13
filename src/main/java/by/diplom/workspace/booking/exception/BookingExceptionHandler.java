@@ -2,6 +2,7 @@ package by.diplom.workspace.booking.exception;
 
 import by.diplom.workspace.web.ApiError;
 import by.diplom.workspace.web.GlobalExceptionHandler;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -23,8 +24,8 @@ public class BookingExceptionHandler {
         );
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ApiError> handleNotFound(EntityNotFoundException ex) {
+    @ExceptionHandler(BookingNotFoundException.class)
+    public ResponseEntity<ApiError> handleNotFound(BookingNotFoundException ex) {
         return GlobalExceptionHandler.buildResponse(
                 HttpStatus.NOT_FOUND,
                 "ENTITY_NOT_FOUND",

@@ -8,10 +8,8 @@ import java.util.UUID;
 public record WorkplaceBookingResponseDto(
         UUID id,
         Long workplaceId,
-        Integer workplaceFloor,
+        Integer floor,
         Integer workplaceNumber,
-        UUID createdById,
-        String createdByFullName,
         LocalDateTime startAt,
         LocalDateTime endAt,
         WorkplaceBookingStatus status

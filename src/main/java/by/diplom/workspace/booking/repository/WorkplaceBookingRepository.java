@@ -1,7 +1,6 @@
 package by.diplom.workspace.booking.repository;
 
 import by.diplom.workspace.booking.model.workplace.WorkplaceBooking;
-import by.diplom.workspace.booking.model.workplace.WorkplaceBookingStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,57 +8,96 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface WorkplaceBookingRepository extends JpaRepository<WorkplaceBooking, UUID> {
 
-    // Проверка пересечений: ищем активные брони на рабочее место в период
+    /**
+     * Находит CONFIRMED-брони, у которых время начала уже наступило.
+     */
     @Query("""
-                SELECT COUNT(b) > 0 FROM WorkplaceBooking b
-                WHERE b.workplace.id = :workplaceId
-                  AND b.status = 'CONFIRMED'
-                  AND b.startAt < :endAt
-                  AND b.endAt > :startAt
+            SELECT wb FROM WorkplaceBooking wb
+            WHERE wb.status = 'CONFIRMED'
+              AND wb.startAt <= :now
             """)
-    boolean existsConflict(
-            @Param("workplaceId") Long workplaceId,
-            @Param("startAt") Instant startAt,
-            @Param("endAt") Instant endAt
+    List<WorkplaceBooking> findConfirmedToStart(@Param("now") Instant now);
+
+    /**
+     * Находит IN_PROGRESS-брони, у которых время окончания уже наступило.
+     */
+    @Query("""
+            SELECT wb FROM WorkplaceBooking wb
+            WHERE wb.status = 'IN_PROGRESS'
+              AND wb.endAt <= :now
+            """)
+    List<WorkplaceBooking> findInProgressToComplete(@Param("now") Instant now);
+
+    /**
+     * Все брони конкретного пользователя (без отменённых).
+     */
+    @Query("""
+            SELECT wb FROM WorkplaceBooking wb
+            JOIN FETCH wb.workplace w
+            WHERE wb.createdBy.id = :userId
+            ORDER BY wb.startAt DESC
+            """)
+    List<WorkplaceBooking> findAllByUserId(@Param("userId") UUID userId);
+
+    /**
+     * Поиск брони по id с проверкой владельца (для операций отмены/обновления).
+     */
+    @Query("""
+            SELECT wb FROM WorkplaceBooking wb
+            JOIN FETCH wb.workplace w
+            WHERE wb.id = :bookingId
+              AND wb.createdBy.id = :userId
+            """)
+    Optional<WorkplaceBooking> findByIdAndUserId(
+            @Param("bookingId") UUID bookingId,
+            @Param("userId") UUID userId
     );
 
-    // То же, но исключая конкретную бронь (для обновления)
+    /**
+     * Проверяет, есть ли пересекающиеся активные брони для рабочего места
+     * в указанный диапазон времени (исключая саму бронь при обновлении).
+     *
+     * Перекрытие: existingStart < newEnd AND existingEnd > newStart
+     */
     @Query("""
-                SELECT COUNT(b) > 0 FROM WorkplaceBooking b
-                WHERE b.workplace.id = :workplaceId
-                  AND b.status = 'CONFIRMED'
-                  AND b.id <> :excludeId
-                  AND b.startAt < :endAt
-                  AND b.endAt > :startAt
+            SELECT COUNT(wb) > 0 FROM WorkplaceBooking wb
+            WHERE wb.workplace.id = :workplaceId
+              AND wb.status IN ('CONFIRMED', 'IN_PROGRESS')
+              AND wb.startAt < :endAt
+              AND wb.endAt > :startAt
+              AND (:excludeId IS NULL OR wb.id <> :excludeId)
             """)
-    boolean existsConflictExcluding(
+    boolean existsOverlap(
             @Param("workplaceId") Long workplaceId,
             @Param("startAt") Instant startAt,
             @Param("endAt") Instant endAt,
             @Param("excludeId") UUID excludeId
     );
 
-    List<WorkplaceBooking> findByCreatedByIdOrderByStartAtDesc(UUID userId);
-
-    List<WorkplaceBooking> findByWorkplaceIdOrderByStartAtAsc(Long workplaceId);
-
+    /**
+     * Возвращает все активные брони рабочего места за указанный день
+     * (от dayStart включительно до dayEnd не включая),
+     * исключая бронь с excludeId (для редактирования).
+     */
     @Query("""
-                SELECT b FROM WorkplaceBooking b
-                WHERE b.workplace.id = :workplaceId
-                  AND b.status = :status
-                  AND b.startAt >= :from
-                  AND b.endAt <= :to
-                ORDER BY b.startAt
+            SELECT wb FROM WorkplaceBooking wb
+            WHERE wb.workplace.id = :workplaceId
+              AND wb.status IN ('CONFIRMED', 'IN_PROGRESS')
+              AND wb.startAt < :dayEnd
+              AND wb.endAt > :dayStart
+              AND (:excludeId IS NULL OR wb.id <> :excludeId)
+            ORDER BY wb.startAt
             """)
-    List<WorkplaceBooking> findByWorkplaceAndStatusAndPeriod(
+    List<WorkplaceBooking> findActiveForDay(
             @Param("workplaceId") Long workplaceId,
-            @Param("status") WorkplaceBookingStatus status,
-            @Param("from") Instant from,
-            @Param("to") Instant to
+            @Param("dayStart") Instant dayStart,
+            @Param("dayEnd") Instant dayEnd,
+            @Param("excludeId") UUID excludeId
     );
 }

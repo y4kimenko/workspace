@@ -10,21 +10,19 @@ import java.time.LocalDateTime;
 
 @Component
 public class WorkplaceBookingMapper {
-    public WorkplaceBookingResponseDto toResponse(WorkplaceBooking booking) {
+    public static WorkplaceBookingResponseDto toResponse(WorkplaceBooking booking) {
         return new WorkplaceBookingResponseDto(
                 booking.getId(),
                 booking.getWorkplace().getId(),
                 booking.getWorkplace().getFloor(),
                 booking.getWorkplace().getNumber(),
-                booking.getCreatedBy().getId(),
-                booking.getCreatedBy().getFullName(),
                 toLocalDateTime(booking.getStartAt(), booking.getCreatedBy()),
                 toLocalDateTime(booking.getEndAt(), booking.getCreatedBy()),
                 booking.getStatus()
         );
     }
 
-    private LocalDateTime toLocalDateTime(Instant instant, User user) {
+    private static LocalDateTime toLocalDateTime(Instant instant, User user) {
         return instant.atZone(user.getZoneId()).toLocalDateTime();
     }
 }

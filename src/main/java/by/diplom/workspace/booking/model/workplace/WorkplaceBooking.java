@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Getter
 @Setter
@@ -57,9 +58,21 @@ public class WorkplaceBooking extends Booking {
         this.status = WorkplaceBookingStatus.CONFIRMED;
     }
 
+    public void start() {
+        if (this.status != WorkplaceBookingStatus.CONFIRMED) {
+            throw new IllegalStateException(
+                    "Начать выполнение можно только у подтверждённого бронирования, текущий статус: " + this.status
+            );
+        }
+        this.status = WorkplaceBookingStatus.IN_PROGRESS;
+    }
+
     public void cancel() {
         if (this.status == WorkplaceBookingStatus.COMPLETED) {
             throw new IllegalStateException("Нельзя отменить завершённое бронирование рабочего места");
+        }
+        if (this.status == WorkplaceBookingStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Нельзя отменить бронирование в процессе выполнения");
         }
 
         this.status = WorkplaceBookingStatus.CANCELLED;
@@ -69,7 +82,15 @@ public class WorkplaceBooking extends Booking {
         if (this.status == WorkplaceBookingStatus.CANCELLED) {
             throw new IllegalStateException("Нельзя завершить отменённое бронирование рабочего места");
         }
+        if (this.status == WorkplaceBookingStatus.CONFIRMED) {
+            throw new IllegalStateException("Нельзя завершить бронирование, которое ещё не началось");
+        }
 
         this.status = WorkplaceBookingStatus.COMPLETED;
     }
+
+    public void changePeriod(LocalDateTime newStartAt, LocalDateTime newEndAt, ZoneId zoneId) {
+        super.changePeriod(newStartAt, newEndAt, zoneId);
+    }
+
 }

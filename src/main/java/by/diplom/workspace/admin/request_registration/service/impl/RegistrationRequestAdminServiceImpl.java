@@ -2,6 +2,7 @@ package by.diplom.workspace.admin.request_registration.service.impl;
 
 import by.diplom.workspace.admin.request_registration.dto.ApproveRegistrationRequestDto;
 import by.diplom.workspace.admin.request_registration.dto.RejectRegistrationRequestDto;
+import by.diplom.workspace.admin.request_registration.dto.RequestRegistrationResponseDto;
 import by.diplom.workspace.admin.request_registration.exception.DepartmentPositionNotFoundException;
 import by.diplom.workspace.admin.request_registration.exception.RegistrationRequestAlreadyCancelledException;
 import by.diplom.workspace.admin.request_registration.exception.RegistrationRequestAlreadyCreatedException;
@@ -12,6 +13,7 @@ import by.diplom.workspace.admin.request_registration.model.StatusRegistration;
 import by.diplom.workspace.admin.request_registration.repository.RegistrationRequestRepository;
 import by.diplom.workspace.admin.request_registration.service.RegistrationRequestAdminService;
 import by.diplom.workspace.worker.notification.component.EmailSender;
+import by.diplom.workspace.worker.position.mapper.DepartmentPositionMapper;
 import by.diplom.workspace.worker.position.model.DepartmentPosition;
 import by.diplom.workspace.worker.position.repository.DepartmentPositionRepository;
 import by.diplom.workspace.worker.worker.component.NicknameGenerator;
@@ -20,10 +22,14 @@ import by.diplom.workspace.worker.worker.dto.user.response.CreateUserResponseDto
 import by.diplom.workspace.worker.worker.model.Employee;
 import by.diplom.workspace.worker.worker.model.GroupManager;
 import by.diplom.workspace.worker.worker.model.user.User;
+import by.diplom.workspace.worker.worker.model.user.time.TimeZoneSupport;
 import by.diplom.workspace.worker.worker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -127,5 +133,20 @@ public class RegistrationRequestAdminServiceImpl implements RegistrationRequestA
                 response
         );
 
+    }
+
+    @Override
+    public List<RequestRegistrationResponseDto> getAll() {
+        return registrationRequestRepository.getAll().stream()
+                .map(req -> new RequestRegistrationResponseDto(
+                    req.getId(),
+                    req.getFullName(),
+                    DepartmentPositionMapper.toResponseDto(req.getDepartmentPosition()),
+                    req.getEmail(),
+                    req.isEmailIsVerified(),
+                    LocalDateTime.ofInstant(req.getCreatedAt(), TimeZoneSupport.toZoneId(TimeZoneSupport.DEFAULT_TIME_ZONE)),
+                    req.getStatus()
+                ))
+                .toList();
     }
 }

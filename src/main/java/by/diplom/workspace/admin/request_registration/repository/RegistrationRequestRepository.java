@@ -4,6 +4,7 @@ import by.diplom.workspace.admin.request_registration.model.RegistrationRequest;
 import by.diplom.workspace.admin.request_registration.model.StatusRegistration;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -12,4 +13,6 @@ public interface RegistrationRequestRepository extends JpaRepository<Registratio
     boolean existsByEmailAndStatus(String email, StatusRegistration status);
 
     Optional<RegistrationRequest> findByEmailAndStatus(String email, StatusRegistration status);
+
+    List<RegistrationRequest> getAll();
 }

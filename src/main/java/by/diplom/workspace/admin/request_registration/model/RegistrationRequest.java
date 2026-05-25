@@ -43,7 +43,7 @@ public class RegistrationRequest {
     @Column(name = "email_is_verified", nullable = false)
     private boolean emailIsVerified = false;
 
-    @Column(name = "expires_at", nullable = false)
+    @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
     @Enumerated(EnumType.STRING)

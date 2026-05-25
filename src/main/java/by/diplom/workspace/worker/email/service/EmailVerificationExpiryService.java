@@ -1,6 +1,7 @@
 package by.diplom.workspace.worker.email.service;
 
 import by.diplom.workspace.worker.email.model.UserEmail;
+import by.diplom.workspace.worker.email.repository.EmailVerificationTokenRepository;
 import by.diplom.workspace.worker.email.repository.UserEmailRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class EmailVerificationExpiryService {
 
     private final TaskScheduler taskScheduler;
     private final UserEmailRepository userEmailRepository;
+    private final EmailVerificationTokenRepository tokenRepository;
 
     // Храним Future, чтобы иметь возможность отменить задачу при верификации
     // или ручном удалении почты до истечения срока
@@ -36,11 +38,12 @@ public class EmailVerificationExpiryService {
     // ── Планирование ──────────────────────────────────────────────────────────
 
     /**
-     * Планирует удаление неверифицированной почты ровно через 15 минут.
+     * Планирует удаление неверифицированной почты ровно через 5 минут.
      * Вызывается сразу после добавления нового email-адреса пользователю.
      *
      * @param userEmailId ID записи UserEmail
      */
+    @Transactional
     public void scheduleExpiry(UUID userEmailId) {
         scheduleAt(userEmailId, Instant.now().plus(EXPIRY_DURATION));
     }
@@ -67,6 +70,7 @@ public class EmailVerificationExpiryService {
      * срок которых ещё не истёк. Закрывает кейс перезапуска приложения.
      */
     @PostConstruct
+    @Transactional
     public void rescheduleOnStartup() {
         List<UserEmail> pending = userEmailRepository.findAllUnverified();
 
@@ -105,19 +109,21 @@ public class EmailVerificationExpiryService {
         log.debug("Задача удаления почты [id={}] запланирована на {}", userEmailId, runAt);
     }
 
-    @Transactional
+
     protected void deleteIfStillUnverified(UUID userEmailId) {
-        pendingTasks.remove(userEmailId); // чистим map после выполнения
+        pendingTasks.remove(userEmailId);
 
         userEmailRepository.findById(userEmailId).ifPresent(email -> {
             if (!email.isVerified()) {
+                tokenRepository.deleteByEmail(email.getEmail());
                 userEmailRepository.delete(email);
+
                 log.info(
-                        "Неверифицированная почта [id={}, email={}] удалена — истёк срок подтверждения ({} мин)",
+                        "Неверифицированная почта [id={}, email={}] удалена – истёк срок подтверждения ({} мин)",
                         userEmailId, email.getEmail(), EXPIRY_DURATION.toMinutes()
                 );
             } else {
-                log.debug("Почта [id={}] уже верифицирована — удаление пропущено", userEmailId);
+                log.debug("Почта [id={}] уже верифицирована – удаление пропущено", userEmailId);
             }
         });
     }

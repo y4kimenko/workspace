@@ -39,7 +39,8 @@ public class EmailController {
             @AuthenticationPrincipal AppUserDetails currentUser,
             @Valid @RequestBody AddEmailRequestDto request
     ) {
-        emailVerificationService.addEmailAndSendCode(currentUser.getId(), request.email());
+        emailVerificationService.addEmail(currentUser.getId(), request.email());
+        emailVerificationService.sendVerificationCode(currentUser.getId(), request.email());
     }
 
 

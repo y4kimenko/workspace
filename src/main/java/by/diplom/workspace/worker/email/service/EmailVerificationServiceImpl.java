@@ -1,6 +1,5 @@
 package by.diplom.workspace.worker.email.service;
 
-
 import by.diplom.workspace.worker.email.dto.response.UserEmailResponseDto;
 import by.diplom.workspace.worker.email.exception.EmailAlreadyExistsException;
 import by.diplom.workspace.worker.email.exception.EmailLimitExceededException;
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -33,51 +33,74 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     private final EmailSender emailSender;
     private final EmailVerificationExpiryService expiryService;
 
-    // SecureRandom — криптографически стойкий генератор, важно для кодов
+    // SecureRandom – криптографически стойкий генератор, важно для кодов
     private final SecureRandom secureRandom = new SecureRandom();
 
-    // ── Шаг 1: добавить email и отправить код ────────────────────────────────
+    // ── Шаг 1: добавить email ────────────────────────────────────────────────
 
     @Override
     @Transactional
-    public void addEmailAndSendCode(UUID userId, String email) {
+    public void addEmail(UUID userId, String email) {
+        String normalizedEmail = normalizeEmail(email);
 
         // 1. Проверяем, что email ещё не занят в системе глобально
-        if (userEmailRepository.existsByEmail(email)) {
-            throw new EmailAlreadyExistsException(email);
+        if (userEmailRepository.existsByEmail(normalizedEmail)) {
+            throw new EmailAlreadyExistsException(normalizedEmail);
         }
 
         // 2. Находим пользователя
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        if (user.getEmails().size() == UserEmail.MAX_EMAIL_COUNT)
+        // 3. Проверяем лимит email-адресов пользователя
+        if (user.getEmails().size() == UserEmail.MAX_EMAIL_COUNT) {
             throw new EmailLimitExceededException(UserEmail.MAX_EMAIL_COUNT);
+        }
 
-        // 3. Добавляем email через метод сущности (verified = false, primaryEmail = false)
-        user.addEmail(email, false, false);
+        // 4. Добавляем email через метод сущности
+        // verified = false, primaryEmail = false
+        user.addEmail(normalizedEmail, false, false);
 
-        // 4. flush() — Hibernate выполняет INSERT прямо сейчас, чтобы мы могли
-        //    получить сохранённый UserEmail по email + userId для создания токена
+        // 5. flush() нужен, чтобы запись UserEmail точно появилась в БД
+        // и её можно было найти по email + userId
         userEmailRepository.flush();
 
-        UserEmail userEmail = userEmailRepository.findByEmailAndUserId(email, userId)
-                .orElseThrow(() -> new EmailNotFoundException(email));
+        // 6. Отправляем код подтверждения
+        sendVerificationCode(userId, normalizedEmail);
+    }
 
-        // 5. Если уже есть старый токен — удаляем (сценарий повторной отправки).
-        //    Также отменяем старую задачу автоудаления — таймер сбрасывается
-        tokenRepository.deleteByUserEmailId(userEmail.getId());
+    // ── Отправка кода подтверждения ──────────────────────────────────────────
+
+    @Override
+    @Transactional
+    public void sendVerificationCode(UUID userId, String email) {
+        String normalizedEmail = normalizeEmail(email);
+
+        // 1. Находим UserEmail текущего пользователя
+        UserEmail userEmail = userEmailRepository.findByEmailAndUserId(normalizedEmail, userId)
+                .orElseThrow(() -> new EmailNotFoundException(normalizedEmail));
+
+        // 2. Если email уже подтверждён, повторно код не отправляем
+        if (userEmail.isVerified()) {
+            return;
+        }
+
+        // 3. Если уже есть старый токен – удаляем его.
+        // Теперь токен связан не с UserEmail, а напрямую с email.
+        tokenRepository.deleteByEmail(normalizedEmail);
+
+        // 4. Отменяем старую задачу автоудаления – таймер будет сброшен
         expiryService.cancelExpiry(userEmail.getId());
 
-        // 6. Генерируем 6-значный код и сохраняем токен (TTL 15 минут)
+        // 5. Генерируем 6-значный код и сохраняем токен
         String code = generateCode();
-        tokenRepository.save(new EmailVerificationToken(userEmail, code));
+        tokenRepository.save(new EmailVerificationToken(normalizedEmail, code));
 
-        // 7. Планируем автоудаление неверифицированной почты через 15 минут
+        // 6. Планируем автоудаление неверифицированной почты
         expiryService.scheduleExpiry(userEmail.getId());
 
-        // 8. Отправляем письмо с кодом
-        emailSender.sendVerificationCode(email, code);
+        // 7. Отправляем письмо с кодом
+        emailSender.sendVerificationCode(normalizedEmail, code);
     }
 
     // ── Шаг 2: подтвердить email по коду ────────────────────────────────────
@@ -85,19 +108,20 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     @Override
     @Transactional
     public void verifyEmail(UUID userId, String email, String code) {
+        String normalizedEmail = normalizeEmail(email);
 
         // 1. Находим UserEmail текущего пользователя
-        UserEmail userEmail = userEmailRepository.findByEmailAndUserId(email, userId)
-                .orElseThrow(() -> new EmailNotFoundException(email));
+        UserEmail userEmail = userEmailRepository.findByEmailAndUserId(normalizedEmail, userId)
+                .orElseThrow(() -> new EmailNotFoundException(normalizedEmail));
 
-        // 2. Идемпотентность — если уже верифицирован, просто выходим
+        // 2. Идемпотентность – если уже верифицирован, просто выходим
         if (userEmail.isVerified()) {
             return;
         }
 
-        // 3. Находим токен верификации
-        EmailVerificationToken token = tokenRepository
-                .findByUserEmailId(userEmail.getId())
+        // 3. Находим токен верификации по email.
+        // Раньше здесь был поиск по userEmailId, но теперь токен хранит email.
+        EmailVerificationToken token = tokenRepository.findByEmail(normalizedEmail)
                 .orElseThrow(InvalidVerificationCodeException::new);
 
         // 4. Проверяем срок действия и совпадение кода
@@ -108,35 +132,35 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         // 5. Помечаем email как верифицированный
         userEmail.markAsVerified();
 
-        // 6. Отменяем задачу автоудаления — почта успешно подтверждена
+        // 6. Отменяем задачу автоудаления – почта успешно подтверждена
         expiryService.cancelExpiry(userEmail.getId());
 
         // 7. Отправляем уведомление на основную почту о добавлении новой верифицированной
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-
         emailSender.sendNewVerifiedEmailAddedNotification(
                 user.getPrimaryEmailAddress(),
                 user.getFullName(),
-                email
+                normalizedEmail
         );
 
         // 8. Удаляем использованный токен
         tokenRepository.delete(token);
     }
 
-    // ── Повторная отправка кода ───────────────────────────────────────────────
+    // ── Повторная отправка кода ──────────────────────────────────────────────
 
     @Override
     @Transactional
     public void resendCode(UUID userId, String email) {
-        // addEmailAndSendCode: удалит старый токен, отменит старую задачу,
-        // создаст новый токен и запланирует новое автоудаление — таймер сбрасывается
-        addEmailAndSendCode(userId, email);
+        // Важно: нельзя вызывать addEmail(...), потому что email уже существует
+        // и проверка userEmailRepository.existsByEmail(...) выбросит исключение.
+        // Поэтому здесь только пересоздаём токен и отправляем новый код.
+        sendVerificationCode(userId, email);
     }
 
-    // ── Список почт пользователя ──────────────────────────────────────────────
+    // ── Список почт пользователя ─────────────────────────────────────────────
 
     @Override
     @Transactional(readOnly = true)
@@ -148,7 +172,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
                 .toList();
     }
 
-    // ── Список верифицированных почт пользователя ──────────────────────────────────────────────
+    // ── Список всех почт пользователя ────────────────────────────────────────
 
     @Override
     @Transactional(readOnly = true)
@@ -159,60 +183,69 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
                 .toList();
     }
 
-    // ── Смена основной почты ──────────────────────────────────────────────────
+    // ── Смена основной почты ─────────────────────────────────────────────────
 
     @Override
     @Transactional
     public void updatePrimaryEmail(UUID userId, String newPrimaryEmail) {
+        String normalizedEmail = normalizeEmail(newPrimaryEmail);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         boolean belongsToUser = user.getEmails().stream()
-                .anyMatch(e -> e.getEmail().equals(newPrimaryEmail));
+                .anyMatch(email -> email.getEmail().equals(normalizedEmail));
 
         if (!belongsToUser) {
-            throw new EmailNotFoundException(newPrimaryEmail);
+            throw new EmailNotFoundException(normalizedEmail);
         }
 
         // Внутри changePrimaryEmail(email, emailSender) уйдёт уведомление
         // на старую основную почту о смене
-        user.changePrimaryEmail(newPrimaryEmail, emailSender);
+        user.changePrimaryEmail(normalizedEmail, emailSender);
     }
 
-
-    // ── Удаление почты ────────────────────────────────────────────────────────
+    // ── Удаление почты ───────────────────────────────────────────────────────
 
     @Override
     @Transactional
     public void deleteEmail(UUID userId, String emailToDelete) {
+        String normalizedEmail = normalizeEmail(emailToDelete);
+
         User user = userRepository.findByIdWithEmails(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         boolean belongsToUser = user.getEmails().stream()
-                .anyMatch(e -> e.getEmail().equals(emailToDelete));
+                .anyMatch(email -> email.getEmail().equals(normalizedEmail));
 
         if (!belongsToUser) {
-            throw new EmailNotFoundException(emailToDelete);
+            throw new EmailNotFoundException(normalizedEmail);
         }
 
-        userEmailRepository.findByEmailAndUserId(emailToDelete, userId)
+        userEmailRepository.findByEmailAndUserId(normalizedEmail, userId)
                 .ifPresent(userEmail -> {
-                    // Отменяем задачу автоудаления (актуально для неверифицированных)
+                    // Отменяем задачу автоудаления
                     expiryService.cancelExpiry(userEmail.getId());
-                    // Удаляем токен верификации явно, чтобы не получить FK violation
-                    tokenRepository.deleteByUserEmailId(userEmail.getId());
+
+                    // Удаляем токен подтверждения.
+                    // Теперь токен удаляется по email, а не по userEmailId.
+                    tokenRepository.deleteByEmail(normalizedEmail);
                 });
 
         // Внутри removeEmail(email, emailSender) уйдёт уведомление
         // на основную почту об удалении верифицированного адреса
-        user.removeEmail(emailToDelete, emailSender);
+        user.removeEmail(normalizedEmail, emailSender);
     }
 
-    // ── Утилиты ───────────────────────────────────────────────────────────────
+    // ── Утилиты ──────────────────────────────────────────────────────────────
 
     private String generateCode() {
-        // Число от 100000 до 999999 — всегда ровно 6 цифр
+        // Число от 100000 до 999999 – всегда ровно 6 цифр
         int code = 100_000 + secureRandom.nextInt(900_000);
         return String.valueOf(code);
+    }
+
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase(Locale.ROOT);
     }
 }

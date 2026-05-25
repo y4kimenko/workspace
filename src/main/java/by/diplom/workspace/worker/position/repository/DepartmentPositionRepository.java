@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DepartmentPositionRepository extends JpaRepository<DepartmentPosition, Long> {
     List<DepartmentPosition> findAllByDepartmentId(Long departmentId);
@@ -19,6 +20,8 @@ public interface DepartmentPositionRepository extends JpaRepository<DepartmentPo
     boolean existsByDepartmentIdAndPositionIdAndIdNot(
             Long departmentId, Long positionId, Long id
     );
+
+    Optional<DepartmentPosition> findByDepartment_IdAndPosition_Id(Long departmentId, Long positionId);
 
     // Обнуляем department у всех связок этого отдела
     @Modifying

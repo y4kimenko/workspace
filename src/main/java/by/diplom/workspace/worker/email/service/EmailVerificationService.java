@@ -7,11 +7,10 @@ import java.util.UUID;
 
 public interface EmailVerificationService {
 
-    /**
-     * Добавляет новый email пользователю (неверифицированный) и отправляет код подтверждения.
-     * Если email уже был добавлен ранее — просто пересылает новый код (resend).
-     */
-    void addEmailAndSendCode(UUID userId, String email);
+
+    void addEmail(UUID userId, String email);
+
+    void sendVerificationCode(UUID userId, String email);
 
     /**
      * Подтверждает email по 6-значному коду.

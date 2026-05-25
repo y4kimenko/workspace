@@ -15,7 +15,7 @@ public class SchedulerConfig {
      * poolSize = 3 — достаточно для одновременного удаления нескольких почт;
      * при большой нагрузке (много регистраций одновременно) увеличьте значение.
      */
-    @Bean
+    @Bean(name = "emailVerificationTaskScheduler")
     public TaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.setPoolSize(3);

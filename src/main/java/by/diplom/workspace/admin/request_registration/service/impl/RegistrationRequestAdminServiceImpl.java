@@ -137,7 +137,7 @@ public class RegistrationRequestAdminServiceImpl implements RegistrationRequestA
 
     @Override
     public List<RequestRegistrationResponseDto> getAll() {
-        return registrationRequestRepository.getAll().stream()
+        return registrationRequestRepository.findAll().stream()
                 .map(req -> new RequestRegistrationResponseDto(
                     req.getId(),
                     req.getFullName(),

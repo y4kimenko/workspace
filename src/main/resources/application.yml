@@ -63,9 +63,3 @@ app:
     scheduler:
       interval: 15m
 
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-  api-docs:
-    path: /api-docs
-

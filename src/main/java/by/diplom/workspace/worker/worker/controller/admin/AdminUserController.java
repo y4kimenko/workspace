@@ -1,6 +1,6 @@
 package by.diplom.workspace.worker.worker.controller.admin;
 
-import by.diplom.workspace.worker.worker.dto.user.request.CreateUserRequestDto;
+import by.diplom.workspace.worker.worker.dto.user.request.CreateUserRequestDtoOld;
 import by.diplom.workspace.worker.worker.dto.user.response.CreateUserResponseDto;
 import by.diplom.workspace.worker.worker.service.AdminUserService;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ public class AdminUserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateUserResponseDto createUser(@Valid @RequestBody CreateUserRequestDto request) {
+    public CreateUserResponseDto createUser(@Valid @RequestBody CreateUserRequestDtoOld request) {
         return adminUserService.createUser(request);
     }
 }

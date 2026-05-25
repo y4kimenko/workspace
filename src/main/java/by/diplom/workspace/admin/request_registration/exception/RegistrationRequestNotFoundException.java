@@ -9,4 +9,8 @@ public class RegistrationRequestNotFoundException extends RuntimeException {
     public RegistrationRequestNotFoundException(String email) {
         super("Активная заявка на регистрацию с email " + email + " не найдена");
     }
+
+    public RegistrationRequestNotFoundException(long id) {
+        super("Активная заявка на регистрацию с id " + id + " не найдена");
+    }
 }

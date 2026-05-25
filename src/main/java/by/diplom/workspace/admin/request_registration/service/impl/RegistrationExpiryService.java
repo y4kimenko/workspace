@@ -1,4 +1,4 @@
-package by.diplom.workspace.admin.request_registration.service;
+package by.diplom.workspace.admin.request_registration.service.impl;
 
 import by.diplom.workspace.admin.request_registration.model.StatusRegistration;
 import by.diplom.workspace.admin.request_registration.repository.RegistrationRequestRepository;

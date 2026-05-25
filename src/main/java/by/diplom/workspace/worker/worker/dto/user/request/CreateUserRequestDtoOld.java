@@ -1,19 +1,18 @@
 package by.diplom.workspace.worker.worker.dto.user.request;
 
-import by.diplom.workspace.worker.position.dto.request.DepartmentPositionRequestDto;
 import by.diplom.workspace.worker.worker.dto.user.EnumsDto.UserTypeRequest;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
-public record CreateUserRequestDto(
+public record CreateUserRequestDtoOld(
         @NotBlank
         String fullName,
 
-        @Valid
-        @NotNull(message = "Отдел и должность обязательны")
-        DepartmentPositionRequestDto departmentPosition,
+        @NotNull
+        @PositiveOrZero
+        Long departmentPositionId,   // должность уже содержит отдел
 
         @Email @NotBlank
         String email,

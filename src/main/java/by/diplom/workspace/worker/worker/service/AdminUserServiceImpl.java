@@ -5,7 +5,7 @@ import by.diplom.workspace.worker.position.model.DepartmentPosition;
 import by.diplom.workspace.worker.position.repository.DepartmentPositionRepository;
 import by.diplom.workspace.worker.worker.component.NicknameGenerator;
 import by.diplom.workspace.worker.worker.component.PasswordGenerator;
-import by.diplom.workspace.worker.worker.dto.user.request.CreateUserRequestDto;
+import by.diplom.workspace.worker.worker.dto.user.request.CreateUserRequestDtoOld;
 import by.diplom.workspace.worker.worker.dto.user.response.CreateUserResponseDto;
 import by.diplom.workspace.worker.worker.model.Employee;
 import by.diplom.workspace.worker.worker.model.GroupManager;
@@ -29,7 +29,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Transactional
     @Override
-    public CreateUserResponseDto createUser(CreateUserRequestDto request) {
+    public CreateUserResponseDto createUser(CreateUserRequestDtoOld request) {
         DepartmentPosition position = departmentPositionRepository
                 .findById(request.departmentPositionId())
                 .orElseThrow(() -> new IllegalArgumentException(

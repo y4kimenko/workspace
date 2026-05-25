@@ -166,6 +166,37 @@ public class EmailSender {
     }
 
     /**/
+    public void sendUserCreationRequestReviewNotification(String toEmail, String fullName, String departmentName, String positionName) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(toEmail);
+        message.setSubject("Ваша заявка на создание аккаунта находится на рассмотрении");
+        message.setText("""
+                Основная информация по заявке:
+                ФИО: %s
+                Отдел: %s
+                Должность: %s
+                
+                После рассмотрения заявки вы получите дополнительное уведомление на эту почту.
+                """.formatted(fullName, departmentName, positionName));
+        mailSender.send(message);
+    }
 
-
+    public void sendAccountCreationRequestRejectedPushNotification(String toEmail, String fullName, String response) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(toEmail);
+        message.setSubject("Заявка на создание аккаунта отклонена");
+        message.setText("""
+                Здравствуйте, %s!
+                
+                По результатам рассмотрения ваша заявка на создание аккаунта была отклонена.
+                
+                Причина отклонения:
+                %s
+                
+                Для уточнения информации вы можете обратиться к администратору системы.
+                """.formatted(fullName, response));
+        mailSender.send(message);
+    }
 }

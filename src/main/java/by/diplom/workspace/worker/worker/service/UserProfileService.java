@@ -1,4 +1,4 @@
-package by.diplom.workspace.worker.worker.service.user.inter;
+package by.diplom.workspace.worker.worker.service;
 
 import by.diplom.workspace.worker.worker.dto.profile.request.UpdateNicknameRequestDto;
 import by.diplom.workspace.worker.worker.dto.profile.request.UpdatePasswordRequestDto;

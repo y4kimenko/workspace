@@ -12,19 +12,20 @@ import by.diplom.workspace.admin.request_registration.model.RegistrationRequest;
 import by.diplom.workspace.admin.request_registration.model.StatusRegistration;
 import by.diplom.workspace.admin.request_registration.repository.RegistrationRequestRepository;
 import by.diplom.workspace.admin.request_registration.service.RegistrationRequestAdminService;
+import by.diplom.workspace.admin.users.dto.response.CreateUserResponseDto;
 import by.diplom.workspace.worker.notification.component.EmailSender;
 import by.diplom.workspace.worker.position.mapper.DepartmentPositionMapper;
 import by.diplom.workspace.worker.position.model.DepartmentPosition;
 import by.diplom.workspace.worker.position.repository.DepartmentPositionRepository;
 import by.diplom.workspace.worker.worker.component.NicknameGenerator;
 import by.diplom.workspace.worker.worker.component.PasswordGenerator;
-import by.diplom.workspace.worker.worker.dto.user.response.CreateUserResponseDto;
 import by.diplom.workspace.worker.worker.model.Employee;
 import by.diplom.workspace.worker.worker.model.GroupManager;
 import by.diplom.workspace.worker.worker.model.user.User;
 import by.diplom.workspace.worker.worker.model.user.time.TimeZoneSupport;
 import by.diplom.workspace.worker.worker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -137,15 +138,15 @@ public class RegistrationRequestAdminServiceImpl implements RegistrationRequestA
 
     @Override
     public List<RequestRegistrationResponseDto> getAll() {
-        return registrationRequestRepository.findAll().stream()
+        return registrationRequestRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
                 .map(req -> new RequestRegistrationResponseDto(
-                    req.getId(),
-                    req.getFullName(),
-                    DepartmentPositionMapper.toResponseDto(req.getDepartmentPosition()),
-                    req.getEmail(),
-                    req.isEmailIsVerified(),
-                    LocalDateTime.ofInstant(req.getCreatedAt(), TimeZoneSupport.toZoneId(TimeZoneSupport.DEFAULT_TIME_ZONE)),
-                    req.getStatus()
+                        req.getId(),
+                        req.getFullName(),
+                        DepartmentPositionMapper.toResponseDto(req.getDepartmentPosition()),
+                        req.getEmail(),
+                        req.isEmailIsVerified(),
+                        LocalDateTime.ofInstant(req.getCreatedAt(), TimeZoneSupport.toZoneId(TimeZoneSupport.DEFAULT_TIME_ZONE)),
+                        req.getStatus()
                 ))
                 .toList();
     }

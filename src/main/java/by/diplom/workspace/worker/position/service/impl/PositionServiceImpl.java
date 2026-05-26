@@ -72,4 +72,13 @@ public class PositionServiceImpl implements PositionService {
                 .map(PositionMapper::toResponseDto)
                 .orElseThrow(() -> new PositionNotFoundException(id));
     }
+
+    @Override
+    public List<PositionResponseDto> getAllPositionsByDepartamentId(Long departamentId) {
+        List<Long> positionsDepartment = departmentPositionRepository.findPositionIdsByDepartmentId(departamentId);
+
+        return positionRepository.findAllById(positionsDepartment).stream()
+                .map(PositionMapper::toResponseDto)
+                .toList();
+    }
 }

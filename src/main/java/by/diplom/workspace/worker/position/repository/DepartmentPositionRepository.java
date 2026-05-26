@@ -32,4 +32,13 @@ public interface DepartmentPositionRepository extends JpaRepository<DepartmentPo
     @Modifying
     @Query("UPDATE DepartmentPosition dp SET dp.position = null WHERE dp.position.id = :positionId")
     void nullifyPosition(@Param("positionId") Long positionId);
+
+
+    @Query("""
+            SELECT dp.position.id
+            FROM DepartmentPosition dp
+            WHERE dp.department.id = :departmentId
+              AND dp.position IS NOT NULL
+            """)
+    List<Long> findPositionIdsByDepartmentId(@Param("departmentId") Long departmentId);
 }

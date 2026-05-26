@@ -1,11 +1,10 @@
 package by.diplom.workspace.admin.request_registration.controller;
 
 import by.diplom.workspace.admin.request_registration.dto.ApproveRegistrationRequestDto;
-import by.diplom.workspace.admin.request_registration.dto.RegistrationRequestDto;
 import by.diplom.workspace.admin.request_registration.dto.RejectRegistrationRequestDto;
 import by.diplom.workspace.admin.request_registration.dto.RequestRegistrationResponseDto;
 import by.diplom.workspace.admin.request_registration.service.RegistrationRequestAdminService;
-import by.diplom.workspace.worker.worker.dto.user.response.CreateUserResponseDto;
+import by.diplom.workspace.admin.users.dto.response.CreateUserResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

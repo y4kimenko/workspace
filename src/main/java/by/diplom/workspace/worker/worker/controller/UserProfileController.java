@@ -1,10 +1,10 @@
-package by.diplom.workspace.worker.worker.controller.user;
+package by.diplom.workspace.worker.worker.controller;
 
 import by.diplom.workspace.security.AppUserDetails;
 import by.diplom.workspace.worker.worker.dto.profile.request.UpdateNicknameRequestDto;
 import by.diplom.workspace.worker.worker.dto.profile.request.UpdatePasswordRequestDto;
 import by.diplom.workspace.worker.worker.dto.profile.response.UserNicknameResponseDto;
-import by.diplom.workspace.worker.worker.service.user.inter.UserProfileService;
+import by.diplom.workspace.worker.worker.service.UserProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

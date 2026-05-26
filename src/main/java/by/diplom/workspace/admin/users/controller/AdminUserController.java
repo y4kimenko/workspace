@@ -1,8 +1,8 @@
-package by.diplom.workspace.worker.worker.controller.admin;
+package by.diplom.workspace.admin.users.controller;
 
-import by.diplom.workspace.worker.worker.dto.user.request.CreateUserRequestDtoOld;
-import by.diplom.workspace.worker.worker.dto.user.response.CreateUserResponseDto;
-import by.diplom.workspace.worker.worker.service.AdminUserService;
+import by.diplom.workspace.admin.users.dto.request.CreateUserRequestDto;
+import by.diplom.workspace.admin.users.dto.response.CreateUserResponseDto;
+import by.diplom.workspace.admin.users.service.AdminUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ public class AdminUserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateUserResponseDto createUser(@Valid @RequestBody CreateUserRequestDtoOld request) {
+    public CreateUserResponseDto createUser(@Valid @RequestBody CreateUserRequestDto request) {
         return adminUserService.createUser(request);
     }
 }

@@ -17,4 +17,6 @@ public interface PositionService {
 
     PositionResponseDto getPosition(Long id);
 
+    List<PositionResponseDto> getAllPositionsByDepartamentId(Long departamentId);
+
 }

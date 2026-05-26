@@ -1,12 +1,13 @@
-package by.diplom.workspace.worker.worker.service;
+package by.diplom.workspace.admin.users.service;
 
+import by.diplom.workspace.admin.request_registration.exception.DepartmentPositionNotFoundException;
+import by.diplom.workspace.admin.users.dto.request.CreateUserRequestDto;
+import by.diplom.workspace.admin.users.dto.response.CreateUserResponseDto;
 import by.diplom.workspace.worker.notification.component.EmailSender;
 import by.diplom.workspace.worker.position.model.DepartmentPosition;
 import by.diplom.workspace.worker.position.repository.DepartmentPositionRepository;
 import by.diplom.workspace.worker.worker.component.NicknameGenerator;
 import by.diplom.workspace.worker.worker.component.PasswordGenerator;
-import by.diplom.workspace.worker.worker.dto.user.request.CreateUserRequestDtoOld;
-import by.diplom.workspace.worker.worker.dto.user.response.CreateUserResponseDto;
 import by.diplom.workspace.worker.worker.model.Employee;
 import by.diplom.workspace.worker.worker.model.GroupManager;
 import by.diplom.workspace.worker.worker.model.user.User;
@@ -29,12 +30,18 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Transactional
     @Override
-    public CreateUserResponseDto createUser(CreateUserRequestDtoOld request) {
+    public CreateUserResponseDto createUser(CreateUserRequestDto request) {
+        long departamentId = request.departmentPosition().departmentId();
+        long potionId = request.departmentPosition().positionId();
+
         DepartmentPosition position = departmentPositionRepository
-                .findById(request.departmentPositionId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Position not found: " + request.departmentPositionId()
-                ));
+                .findByDepartment_IdAndPosition_Id(
+                        departamentId,
+                        potionId
+                )
+                .orElseThrow(
+                        () -> new DepartmentPositionNotFoundException(departamentId, potionId)
+                );
 
         String rawPassword = passwordGenerator.generate();
         String passwordHash = passwordEncoder.encode(rawPassword);

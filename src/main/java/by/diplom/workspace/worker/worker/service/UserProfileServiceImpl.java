@@ -1,4 +1,4 @@
-package by.diplom.workspace.worker.worker.service.user.impl;
+package by.diplom.workspace.worker.worker.service;
 
 import by.diplom.workspace.worker.email.exception.EmailNotFoundException;
 import by.diplom.workspace.worker.email.model.UserEmail;
@@ -18,7 +18,6 @@ import by.diplom.workspace.worker.worker.exception.password.PasswordMismatchExce
 import by.diplom.workspace.worker.worker.model.user.Pronoun;
 import by.diplom.workspace.worker.worker.model.user.User;
 import by.diplom.workspace.worker.worker.repository.UserRepository;
-import by.diplom.workspace.worker.worker.service.user.inter.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

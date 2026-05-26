@@ -1,4 +1,4 @@
-package by.diplom.workspace.worker.worker.controller.user;
+package by.diplom.workspace.worker.worker.controller;
 
 
 import by.diplom.workspace.security.AppUserDetails;
@@ -7,7 +7,7 @@ import by.diplom.workspace.worker.worker.dto.profile.response.PronounResponseDto
 import by.diplom.workspace.worker.worker.dto.profile.response.UserPartPublicProfileResponseDto;
 import by.diplom.workspace.worker.worker.dto.profile.response.UserPublicProfileResponseDto;
 import by.diplom.workspace.worker.worker.model.user.Pronoun;
-import by.diplom.workspace.worker.worker.service.user.inter.UserProfileService;
+import by.diplom.workspace.worker.worker.service.UserProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

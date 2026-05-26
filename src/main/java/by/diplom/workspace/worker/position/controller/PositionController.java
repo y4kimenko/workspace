@@ -46,6 +46,13 @@ public class PositionController {
         return positionService.updatePosition(id, request);
     }
 
+    @GetMapping("/{departamentId}")
+    public List<PositionResponseDto> getAllPositionsByDepartamentId(
+            @PathVariable Long departamentId
+    ) {
+        return positionService.getAllPositionsByDepartamentId(departamentId);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePosition(@PathVariable Long id) {

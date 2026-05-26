@@ -1,7 +1,7 @@
-package by.diplom.workspace.worker.worker.dto.user.request;
+package by.diplom.workspace.admin.users.dto.request;
 
+import by.diplom.workspace.admin.users.dto.EnumsDto.UserTypeRequest;
 import by.diplom.workspace.worker.position.dto.request.DepartmentPositionRequestDto;
-import by.diplom.workspace.worker.worker.dto.user.EnumsDto.UserTypeRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

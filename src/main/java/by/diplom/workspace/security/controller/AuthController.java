@@ -8,15 +8,23 @@ import by.diplom.workspace.security.dto.TokenResponseDto;
 import by.diplom.workspace.security.service.AppUserDetailsService;
 import by.diplom.workspace.security.service.JwtService;
 import by.diplom.workspace.security.service.RefreshTokenService;
+import by.diplom.workspace.worker.position.dto.response.DepartmentResponseDto;
+import by.diplom.workspace.worker.position.dto.response.PositionResponseDto;
+import by.diplom.workspace.worker.position.service.DepartmentService;
+import by.diplom.workspace.worker.position.service.PositionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,6 +35,8 @@ public class AuthController {
     private final AppUserDetailsService userDetailsService;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final PositionService positionService;
+    private final DepartmentService departmentService;
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponseDto> login(@RequestBody LoginRequestDto request) {
@@ -82,5 +92,17 @@ public class AuthController {
             // Уже отозван — не проблема
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/positions/{departamentId}")
+    public List<PositionResponseDto> getAllPositionsByDepartamentId(
+            @PathVariable Long departamentId
+    ) {
+        return positionService.getAllPositionsByDepartamentId(departamentId);
+    }
+
+    @GetMapping("/departments")
+    public List<DepartmentResponseDto> getAllDepartments() {
+        return departmentService.getAllDepartments();
     }
 }

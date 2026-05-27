@@ -126,7 +126,16 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
                 .orElseThrow(InvalidVerificationCodeException::new);
 
         // 4. Проверяем срок действия и совпадение кода
-        if (token.isExpired() || !token.getCode().equals(code)) {
+        if (token.isExpired()) {
+            expiryService.cancelExpiry(userEmail.getId());
+
+            tokenRepository.delete(token);
+            userEmailRepository.delete(userEmail);
+
+            throw new InvalidVerificationCodeException();
+        }
+
+        if (!token.getCode().equals(code)) {
             throw new InvalidVerificationCodeException();
         }
 

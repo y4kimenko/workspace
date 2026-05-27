@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -25,52 +25,33 @@ import java.util.concurrent.ScheduledFuture;
 public class EmailVerificationExpiryService {
 
     @Value("${app.email-verification.expiry-duration}")
-    private Duration EXPIRY_DURATION;
+    private Duration expiryDuration;
 
     private final TaskScheduler taskScheduler;
     private final UserEmailRepository userEmailRepository;
     private final EmailVerificationTokenRepository tokenRepository;
+    private final TransactionTemplate transactionTemplate;
 
-    // Храним Future, чтобы иметь возможность отменить задачу при верификации
-    // или ручном удалении почты до истечения срока
     private final Map<UUID, ScheduledFuture<?>> pendingTasks = new ConcurrentHashMap<>();
 
-    // ── Планирование ──────────────────────────────────────────────────────────
-
-    /**
-     * Планирует удаление неверифицированной почты ровно через 5 минут.
-     * Вызывается сразу после добавления нового email-адреса пользователю.
-     *
-     * @param userEmailId ID записи UserEmail
-     */
-    @Transactional
-    public void scheduleExpiry(UUID userEmailId) {
-        scheduleAt(userEmailId, Instant.now().plus(EXPIRY_DURATION));
+    public void scheduleExpiry(UUID userEmailId, Instant expiresAt) {
+        scheduleAt(userEmailId, expiresAt);
     }
 
-    /**
-     * Отменяет запланированное удаление.
-     * Вызывается когда пользователь успешно верифицировал почту
-     * или вручную удалил её раньше срока.
-     *
-     * @param userEmailId ID записи UserEmail
-     */
+    public void scheduleExpiry(UUID userEmailId) {
+        scheduleAt(userEmailId, Instant.now().plus(expiryDuration));
+    }
+
     public void cancelExpiry(UUID userEmailId) {
         ScheduledFuture<?> future = pendingTasks.remove(userEmailId);
+
         if (future != null) {
-            future.cancel(false); // false — не прерывать, если уже выполняется
+            future.cancel(false);
             log.debug("Задача удаления для почты [id={}] отменена", userEmailId);
         }
     }
 
-    // ── Восстановление задач при перезапуске ─────────────────────────────────
-
-    /**
-     * При старте приложения восстанавливает задачи для всех неверифицированных почт,
-     * срок которых ещё не истёк. Закрывает кейс перезапуска приложения.
-     */
     @PostConstruct
-    @Transactional
     public void rescheduleOnStartup() {
         List<UserEmail> pending = userEmailRepository.findAllUnverified();
 
@@ -82,49 +63,67 @@ public class EmailVerificationExpiryService {
         Instant now = Instant.now();
         int rescheduled = 0;
 
-        for (UserEmail email : pending) {
-            Instant expiresAt = email.getCreatedAt().plus(EXPIRY_DURATION);
+        for (UserEmail userEmail : pending) {
+            tokenRepository.findByEmail(userEmail.getEmail()).ifPresentOrElse(token -> {
+                Instant expiresAt = token.getExpiresAt();
 
-            if (expiresAt.isAfter(now)) {
-                // Срок ещё не истёк — планируем на оставшееся время
-                scheduleAt(email.getId(), expiresAt);
-            } else {
-                // Просрочена пока приложение было выключено — удаляем через 5 сек
-                scheduleAt(email.getId(), now.plusSeconds(5));
-            }
+                if (expiresAt.isAfter(now)) {
+                    scheduleAt(userEmail.getId(), expiresAt);
+                } else {
+                    scheduleAt(userEmail.getId(), now.plusSeconds(5));
+                }
+            }, () -> {
+                scheduleAt(userEmail.getId(), now.plusSeconds(5));
+            });
+
             rescheduled++;
         }
 
         log.info("Восстановлено {} задач удаления неверифицированных почт", rescheduled);
     }
 
-    // ── Внутренние методы ─────────────────────────────────────────────────────
-
     private void scheduleAt(UUID userEmailId, Instant runAt) {
+        cancelExpiry(userEmailId);
+
         ScheduledFuture<?> future = taskScheduler.schedule(
                 () -> deleteIfStillUnverified(userEmailId),
                 runAt
         );
+
         pendingTasks.put(userEmailId, future);
+
         log.debug("Задача удаления почты [id={}] запланирована на {}", userEmailId, runAt);
     }
 
-
-    protected void deleteIfStillUnverified(UUID userEmailId) {
+    private void deleteIfStillUnverified(UUID userEmailId) {
         pendingTasks.remove(userEmailId);
 
-        userEmailRepository.findById(userEmailId).ifPresent(email -> {
-            if (!email.isVerified()) {
-                tokenRepository.deleteByEmail(email.getEmail());
-                userEmailRepository.delete(email);
+        transactionTemplate.executeWithoutResult(status -> {
+            userEmailRepository.findById(userEmailId).ifPresent(userEmail -> {
+                if (userEmail.isVerified()) {
+                    log.debug("Почта [id={}] уже верифицирована – удаление пропущено", userEmailId);
+                    return;
+                }
+
+                if (userEmail.isPrimaryEmail()) {
+                    log.warn(
+                            "Почта [id={}, email={}] является основной – удаление пропущено",
+                            userEmailId,
+                            userEmail.getEmail()
+                    );
+                    return;
+                }
+
+                tokenRepository.deleteByEmail(userEmail.getEmail());
+                userEmailRepository.delete(userEmail);
 
                 log.info(
                         "Неверифицированная почта [id={}, email={}] удалена – истёк срок подтверждения ({} мин)",
-                        userEmailId, email.getEmail(), EXPIRY_DURATION.toMinutes()
+                        userEmailId,
+                        userEmail.getEmail(),
+                        expiryDuration.toMinutes()
                 );
-            } else {
-                log.debug("Почта [id={}] уже верифицирована – удаление пропущено", userEmailId);
-            }
+            });
         });
     }
 }

@@ -45,7 +45,7 @@ spring:
 app:
   jwt:
     secret: ${APP_JWT_SECRET}   # минимум 32 байта в base64
-    expiration-ms: 900000          # 15 минут
+    expiration-ms: 9000000          # 25 часов
     refresh-expiration-ms: 2592000000  # 30 дней
 
   admin:

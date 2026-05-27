@@ -46,7 +46,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
+@Table(name = "users", schema = "public")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

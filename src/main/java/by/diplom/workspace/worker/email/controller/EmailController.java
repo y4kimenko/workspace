@@ -3,7 +3,7 @@ package by.diplom.workspace.worker.email.controller;
 import by.diplom.workspace.security.AppUserDetails;
 import by.diplom.workspace.worker.email.dto.request.AddEmailRequestDto;
 import by.diplom.workspace.worker.email.dto.request.EmailRequestDto;
-import by.diplom.workspace.worker.email.dto.request.UpdatePrimaryEmailRequestDto;
+import by.diplom.workspace.worker.email.dto.request.UpdateEmailRequestDto;
 import by.diplom.workspace.worker.email.dto.request.VerifyEmailRequestDto;
 import by.diplom.workspace.worker.email.dto.response.UserEmailResponseDto;
 import by.diplom.workspace.worker.email.service.EmailVerificationService;
@@ -87,9 +87,21 @@ public class EmailController {
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204
     public void updatePrimaryEmail(
             @AuthenticationPrincipal AppUserDetails currentUser,
-            @Valid @RequestBody UpdatePrimaryEmailRequestDto request
+            @Valid @RequestBody UpdateEmailRequestDto request
     ) {
         emailVerificationService.updatePrimaryEmail(
+                currentUser.getId(),
+                request.email()
+        );
+    }
+
+    @PatchMapping("/public")
+    @ResponseStatus(HttpStatus.NO_CONTENT) // 204
+    public void updatePublicEmail(
+            @AuthenticationPrincipal AppUserDetails currentUser,
+            @Valid @RequestBody UpdateEmailRequestDto request
+    ) {
+        emailVerificationService.updatePublicEmail(
                 currentUser.getId(),
                 request.email()
         );

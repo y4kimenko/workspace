@@ -41,6 +41,7 @@ public interface EmailVerificationService {
     void updatePrimaryEmail(UUID userId, String newPrimaryEmail);
 
 
+    void updatePublicEmail(UUID userId, String newPublicEmail);
     /**
      * Удаляет email-адрес пользователя.
      * Нельзя удалить основную почту или единственную почту.

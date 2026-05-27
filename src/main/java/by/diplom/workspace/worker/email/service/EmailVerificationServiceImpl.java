@@ -215,6 +215,25 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         user.changePrimaryEmail(normalizedEmail, emailSender);
     }
 
+
+    @Override
+    @Transactional
+    public void updatePublicEmail(UUID userId, String newPublicEmail) {
+        String normalizedEmail = normalizeEmail(newPublicEmail);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        boolean belongsToUser = user.getEmails().stream()
+                .anyMatch(email -> email.getEmail().equals(normalizedEmail));
+
+        if (!belongsToUser) {
+            throw new EmailNotFoundException(normalizedEmail);
+        }
+
+        user.changePublicEmail(normalizedEmail);
+    }
+
     // ── Удаление почты ───────────────────────────────────────────────────────
 
     @Override

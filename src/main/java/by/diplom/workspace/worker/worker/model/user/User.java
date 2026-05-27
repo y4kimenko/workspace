@@ -233,28 +233,28 @@ public abstract class User implements TimeZoneAware {
         }
     }
 
-
     public void changePublicEmail(String newPublicEmail) {
-        boolean found = false;
+        UserEmail newPublic = emails.stream()
+                .filter(userEmail -> userEmail.getEmail().equals(newPublicEmail))
+                .findFirst()
+                .orElseThrow(() -> new EmailNotFoundException(newPublicEmail));
+
+        // Только подтверждённый email может стать публичным
+        if (!newPublic.isVerified()) {
+            throw new IllegalStateException(
+                    "Нельзя сделать публичным неподтверждённый email"
+            );
+        }
+
+        if (newPublic.isPublicEmail()) {
+            return;
+        }
 
         for (UserEmail userEmail : emails) {
-            if (userEmail.getEmail().equals(newPublicEmail)) {
-                // Только подтверждённый email может стать публичным
-                if (!userEmail.isVerified()) {
-                    throw new IllegalStateException(
-                            "Нельзя сделать публичным неподтверждённый email"
-                    );
-                }
-                userEmail.makePublic();
-                found = true;
-            } else {
-                userEmail.revokePublic(); // снимаем public со всех остальных
-            }
+            userEmail.revokePublic();
         }
 
-        if (!found) {
-            throw new EmailNotFoundException(newPublicEmail);
-        }
+        newPublic.makePublic();
     }
 
     public void changeNickname(String nickname) {

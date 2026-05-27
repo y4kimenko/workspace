@@ -91,6 +91,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
         // 4. Отменяем старую задачу автоудаления – таймер будет сброшен
         expiryService.cancelExpiry(userEmail.getId());
+        tokenRepository.flush();
 
         // 5. Генерируем 6-значный код и сохраняем токен
         String code = generateCode();

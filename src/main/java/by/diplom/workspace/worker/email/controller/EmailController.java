@@ -40,7 +40,6 @@ public class EmailController {
             @Valid @RequestBody AddEmailRequestDto request
     ) {
         emailVerificationService.addEmail(currentUser.getId(), request.email());
-        emailVerificationService.sendVerificationCode(currentUser.getId(), request.email());
     }
 
 

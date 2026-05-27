@@ -2,6 +2,7 @@ package by.diplom.workspace.worker.email.controller;
 
 import by.diplom.workspace.security.AppUserDetails;
 import by.diplom.workspace.worker.email.dto.request.AddEmailRequestDto;
+import by.diplom.workspace.worker.email.dto.request.EmailRequestDto;
 import by.diplom.workspace.worker.email.dto.request.UpdatePrimaryEmailRequestDto;
 import by.diplom.workspace.worker.email.dto.request.VerifyEmailRequestDto;
 import by.diplom.workspace.worker.email.dto.response.UserEmailResponseDto;
@@ -96,12 +97,12 @@ public class EmailController {
     }
 
 
-    @DeleteMapping("/{email}")
+    @DeleteMapping()
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204
     public void deleteEmail(
             @AuthenticationPrincipal AppUserDetails currentUser,
-            @PathVariable String email
+            @Valid @RequestBody EmailRequestDto dto
     ) {
-        emailVerificationService.deleteEmail(currentUser.getId(), email);
+        emailVerificationService.deleteEmail(currentUser.getId(), dto.email());
     }
 }

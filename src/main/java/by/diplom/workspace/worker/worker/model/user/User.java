@@ -150,28 +150,35 @@ public abstract class User implements TimeZoneAware {
     }
 
     public void removeEmail(String emailToDelete, EmailSender emailSender) {
-        if (emails.size() <= 1) throw new CannotDeleteLastEmailException();
+        if (emails.size() <= 1) {
+            throw new CannotDeleteLastEmailException();
+        }
 
         UserEmail target = emails.stream()
                 .filter(e -> e.getEmail().equals(emailToDelete))
                 .findFirst()
                 .orElseThrow(() -> new EmailNotFoundException(emailToDelete));
 
-        if (target.isPrimaryEmail()) throw new CannotDeletePrimaryEmailException();
+        if (target.isPrimaryEmail()) {
+            throw new CannotDeletePrimaryEmailException();
+        }
 
         boolean wasPublic = target.isPublicEmail();
+        boolean wasVerified = target.isVerified();
 
-        emailSender.sendVerifiedEmailRemovedNotification(
-                getPrimaryEmailAddress(),
-                this.fullName,
-                emailToDelete
-        );
+        String primaryEmail = emails.stream()
+                .filter(UserEmail::isPrimaryEmail)
+                .map(UserEmail::getEmail)
+                .findFirst()
+                .orElse(null);
+
         emails.remove(target);
 
         // Если удалили единственный публичный —
         // автоматически делаем публичным primary email
         if (wasPublic) {
             boolean hasAnyPublic = emails.stream().anyMatch(UserEmail::isPublicEmail);
+
             if (!hasAnyPublic) {
                 emails.stream()
                         .filter(UserEmail::isPrimaryEmail)
@@ -179,35 +186,53 @@ public abstract class User implements TimeZoneAware {
                         .ifPresent(UserEmail::makePublic);
             }
         }
+
+        if (wasVerified && primaryEmail != null) {
+            emailSender.sendVerifiedEmailRemovedNotification(
+                    primaryEmail,
+                    this.fullName,
+                    emailToDelete
+            );
+        }
     }
 
     public void changePrimaryEmail(String newPrimaryEmail, EmailSender emailSender) {
-        boolean found = false;
+        UserEmail newPrimary = emails.stream()
+                .filter(userEmail -> userEmail.getEmail().equals(newPrimaryEmail))
+                .findFirst()
+                .orElseThrow(() -> new EmailNotFoundException(newPrimaryEmail));
+
+        // Только подтверждённый email может стать основным
+        if (!newPrimary.isVerified()) {
+            throw new IllegalStateException(
+                    "Нельзя сделать основным неподтверждённый email"
+            );
+        }
+
+        UserEmail oldPrimary = emails.stream()
+                .filter(UserEmail::isPrimaryEmail)
+                .findFirst()
+                .orElse(null);
+
+        if (newPrimary.isPrimaryEmail()) {
+            return;
+        }
 
         for (UserEmail userEmail : emails) {
-            if (userEmail.getEmail().equals(newPrimaryEmail)) {
-                // Только подтверждённый email может стать основным
-                if (!userEmail.isVerified()) {
-                    throw new IllegalStateException(
-                            "Нельзя сделать основным неподтверждённый email"
-                    );
-                }
-                emailSender.sendPrimaryEmailChangedNotification(
-                        getPrimaryEmailAddress(),
-                        this.fullName,
-                        newPrimaryEmail
-                );
-                userEmail.makePrimary();
-                found = true;
-            } else {
-                userEmail.revokePrimary(); // снимаем primary со всех остальных
-            }
+            userEmail.revokePrimary();
         }
 
-        if (!found) {
-            throw new EmailNotFoundException(newPrimaryEmail);
+        newPrimary.makePrimary();
+
+        if (oldPrimary != null) {
+            emailSender.sendPrimaryEmailChangedNotification(
+                    oldPrimary.getEmail(),
+                    this.fullName,
+                    newPrimaryEmail
+            );
         }
     }
+
 
     public void changePublicEmail(String newPublicEmail) {
         boolean found = false;
